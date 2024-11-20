@@ -1,12 +1,12 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
 
   import '../css/app.css';
 
-	export let user;
+	export let user: string;
 	export let useYTStudioURL = false;
 
-	let iframeContainer;
+	let iframeContainer: HTMLDivElement;
 
 	const hostname = browser && window.location.hostname;
 	const theme = (browser && localStorage.getItem('theme')) || 'dark';
@@ -18,14 +18,14 @@
 
 	/**
 	 * Get the liveId of a youtube channel
-	 * @param {string} handle - The handle of the channel
-	 * @returns {Promise<{ liveId: string }>} - The liveId of the channel
+	 * @param {string} userChannel - The userChannel
+	 * @returns {Promise<{ liveId: string | null }>} - The liveId of the channel
 	 */
-	async function getLiveId(handle, index = 0) {
+	async function getLiveId(userChannel: string, index = 0): Promise<{ liveId: string | null; }> {
 		try {
 			if (index >= proxies.length) return { liveId: null };
 			const html = await fetch(
-				`${proxies[index]}${encodeURIComponent(`https://www.youtube.com/${handle}/live`)}`
+				`${proxies[index]}${encodeURIComponent(`https://www.youtube.com/${userChannel}/live`)}`
 			).then(async (v) => {
 				const contentType = v.headers.get('content-type');
 				if (contentType && contentType.includes('application/json')) {
@@ -40,8 +40,8 @@
 			const doc = parser.parseFromString(html, 'text/html');
 
 			const linkElement = doc.querySelector('link[rel="canonical"]');
-			const url = linkElement.getAttribute('href');
-			const videoIdMatch = url.match(/v=([^&]+)/);
+			const url = linkElement?.getAttribute('href');
+			const videoIdMatch = url?.match(/v=([^&]+)/);
 
 			if (!videoIdMatch?.[1]) {
 				throw new Error('No video id found');
@@ -49,11 +49,11 @@
 
 			return { liveId: videoIdMatch[1] };
 		} catch (error) {
-			return getLiveId(handle, index + 1);
+			return getLiveId(userChannel, index + 1);
 		}
 	}
 
-	function handleThemeChange() {
+	function handleThemeChange(): void {
 		if (browser) {
 			const currentTheme = localStorage.getItem('theme') || 'dark';
 
@@ -71,66 +71,52 @@
 		}
 	}
 
-	/**
-	 * Setup the chat iframe
-	 */
-	async function setupChat() {
+	async function setupChatIframe(): Promise<boolean | undefined> {
 		const { liveId } = await getLiveId(user);
 		if (!liveId) return false;
 
-		const url = `https://${useYTStudioURL ? `studio.youtube.com` : `www.youtube.com`}/live_chat?v=${liveId}&is_popout=1&embed_domain=${hostname}&theme=${theme}`;
+		const url = `https://${useYTStudioURL === true ? `studio.youtube.com` : `www.youtube.com`}/live_chat?v=${liveId}&is_popout=1&embed_domain=${hostname}&theme=${theme}`;
 
-		const iframeTemplate = document.getElementById('iframe-template');
+		const iframeTemplate = (document.getElementById('iframe-template') as HTMLTemplateElement);
 		if (!iframeTemplate) return;
-		/** @type {DocumentFragment} */
-		// @ts-ignore
+		
 		const clone = iframeTemplate.content.cloneNode(true);
-		const iframe = clone.querySelector('iframe');
+		const iframe = (clone as HTMLElement).querySelector('iframe') ?? { src: '' };
 		iframe.src = url;
 
-		// document.body.appendChild(clone);
 		iframeContainer.appendChild(clone);
 
 		return true;
 	}
 
-	/**
-	 * Setup the no user template
-	 */
-	function setupNoUser() {
-		const noUserTemplate = document.getElementById('no-user-template');
+	function setupNoUser(): void {
+		const noUserTemplate = (document.getElementById('no-user-template') as HTMLTemplateElement);
 		if (!noUserTemplate) return;
-		// @ts-ignore
-		// document.body.appendChild(noUserTemplate.content.cloneNode(true));
 		iframeContainer.appendChild(noUserTemplate.content.cloneNode(true));
 	}
 
-	/**
-	 * Setup the no live template
-	 */
-	function setupNoLive() {
-		const noLiveTemplate = document.getElementById('no-live-template');
+	function setupNoLive(): void {
+		const noLiveTemplate = (document.getElementById('no-live-template') as HTMLTemplateElement);
 		if (!noLiveTemplate) return;
-		// @ts-ignore
-		// document.body.appendChild(noLiveTemplate.content.cloneNode(true));
 		iframeContainer.appendChild(noLiveTemplate.content.cloneNode(true));
 	}
 
-	async function setup() {
+	async function setup(): Promise<void> {
 		if (browser) {
 			document.body.classList.toggle('dark', theme !== 'dark');
 			if (!user) {
 				setupNoUser();
-				document.querySelector('.spinner').remove();
+				document?.querySelector('.spinner')?.remove();
 			} else {
-				// document.title = `${user} - Youtube Chat Thing`;
-				const success = await setupChat();
+				document.title = `${user} - Youtube Live Chat`;
+				const success = await setupChatIframe();
 				if (!success) {
 					setupNoLive();
-					document.querySelector('.spinner').remove();
+					document?.querySelector('.spinner')?.remove();
 				}
-				document.querySelector('iframe').addEventListener('load', () => {
-					document.querySelector('.spinner').remove();
+
+				document?.querySelector('iframe')?.addEventListener('load', () => {
+					document?.querySelector('.spinner')?.remove();
 				});
 			}
 		}
@@ -141,33 +127,9 @@
 
 <div>
 	<span class="spinner"></span>
-
 	<div class="icons-bar">
-		<!-- <a href="https://github.com/gsporto/youtube-chat-thing" target="_blank">
-      <svg aria-hidden="true" viewBox="0 0 16 16" fill="currentColor">
-        <path
-          d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
-        />
-      </svg>
-    </a> -->
-
-		<!-- svelte-ignore a11y_consider_explicit_label -->
-		<button on:click={() => handleThemeChange()}>
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="2 2 44 44" fill="currentColor">
-				<g id="Layer_2" data-name="Layer 2">
-					<g id="Icons">
-						<g>
-							<rect width="48" height="48" fill="none"></rect>
-							<g>
-								<path d="M14,24A10,10,0,0,0,24,34V14A10,10,0,0,0,14,24Z"></path>
-								<path
-									d="M24,2A22,22,0,1,0,46,24,21.9,21.9,0,0,0,24,2ZM6,24A18.1,18.1,0,0,1,24,6v8a10,10,0,0,1,0,20v8A18.1,18.1,0,0,1,6,24Z"
-								></path>
-							</g>
-						</g>
-					</g>
-				</g>
-			</svg>
+		<button on:click={() => handleThemeChange()} aria-label="Handle Theme Change">
+			<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}><path fill="#888888" d="M20.958 15.325c.204-.486-.379-.9-.868-.684a7.7 7.7 0 0 1-3.101.648c-4.185 0-7.577-3.324-7.577-7.425a7.3 7.3 0 0 1 1.134-3.91c.284-.448-.057-1.068-.577-.936C5.96 4.041 3 7.613 3 11.862C3 16.909 7.175 21 12.326 21c3.9 0 7.24-2.345 8.632-5.675"/><path fill="#888888" d="M15.611 3.103c-.53-.354-1.162.278-.809.808l.63.945a2.33 2.33 0 0 1 0 2.588l-.63.945c-.353.53.28 1.162.81.808l.944-.63a2.33 2.33 0 0 1 2.588 0l.945.63c.53.354 1.162-.278.808-.808l-.63-.945a2.33 2.33 0 0 1 0-2.588l.63-.945c.354-.53-.278-1.162-.809-.808l-.944.63a2.33 2.33 0 0 1-2.588 0z"/></svg>
 		</button>
 	</div>
 
@@ -193,39 +155,12 @@
 </div>
 
 <style>
-	* {
-		box-sizing: border-box;
-		padding: 0;
-		margin: 0;
-	}
-
-	:root {
-		--theme-bg: #0f0f0f;
-		--theme-bg-foreground: #f0f0f0;
-	}
-
-	.dark {
-		--theme-bg: #f0f0f0;
-		--theme-bg-foreground: #0f0f0f;
-	}
-
-	/* :global(html),
-	:global(body) {
-		margin: 0;
-		width: 100dvw;
-		height: 100dvh;
-		overflow: hidden;
-		position: relative;
-		background-color: var(--theme-bg);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	} */
-
+	
 	.chat-iframe {
 		width: 100dvw;
 		height: 100dvh;
 		border: none;
+		display: block;
 	}
 
 	.text {
@@ -247,9 +182,9 @@
 		display: none;
 	}
 
-	.icons-bar a {
+	/* .icons-bar a {
 		display: flex;
-	}
+	} */
 
 	.icons-bar button {
 		background-color: transparent;

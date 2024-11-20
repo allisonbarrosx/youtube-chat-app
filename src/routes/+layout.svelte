@@ -1,6 +1,7 @@
 <script>
   	import '../css/app.css';
-    import '../css/bootstrap-utilities.scss';
+    import 'bootstrap/dist/css/bootstrap-utilities.css';
+    import 'bootstrap/dist/css/bootstrap-grid.css';
 </script>
 
 <main>
@@ -19,5 +20,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  :global(.dark) {
+    --theme-bg: #f0f0f0;
+    --theme-bg-foreground: #0f0f0f;
   }
 </style>
