@@ -9,7 +9,7 @@
 	let iframeContainer: HTMLDivElement;
 
 	const hostname = browser && window.location.hostname;
-	const theme = (browser && localStorage.getItem('theme')) || 'dark';
+	const theme = (browser && localStorage.getItem('theme')) ?? 'dark';
 	const proxies = [
 		'https://corsproxy.io/?',
 		'https://api.codetabs.com/v1/proxy/?quest=',

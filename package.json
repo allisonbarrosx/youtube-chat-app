@@ -14,8 +14,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"tauri": "tauri",
-		"tauri:dev": "yarn tauri dev",
-		"tauri:build": "yarn tauri build"
+		"tauri:dev": "tauri dev",
+		"tauri:build": "tauri build"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",
