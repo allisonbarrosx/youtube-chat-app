@@ -1,0 +1,285 @@
+<script>
+	import { browser } from '$app/environment';
+
+  import '../css/app.css';
+
+	export let user;
+	export let useYTStudioURL = false;
+
+	let iframeContainer;
+
+	const hostname = browser && window.location.hostname;
+	const theme = (browser && localStorage.getItem('theme')) || 'dark';
+	const proxies = [
+		'https://corsproxy.io/?',
+		'https://api.codetabs.com/v1/proxy/?quest=',
+		'https://api.allorigins.win/get?url='
+	];
+
+	/**
+	 * Get the liveId of a youtube channel
+	 * @param {string} handle - The handle of the channel
+	 * @returns {Promise<{ liveId: string }>} - The liveId of the channel
+	 */
+	async function getLiveId(handle, index = 0) {
+		try {
+			if (index >= proxies.length) return { liveId: null };
+			const html = await fetch(
+				`${proxies[index]}${encodeURIComponent(`https://www.youtube.com/${handle}/live`)}`
+			).then(async (v) => {
+				const contentType = v.headers.get('content-type');
+				if (contentType && contentType.includes('application/json')) {
+					const json = await v.json();
+					return json.contents;
+				} else {
+					return v.text();
+				}
+			});
+
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(html, 'text/html');
+
+			const linkElement = doc.querySelector('link[rel="canonical"]');
+			const url = linkElement.getAttribute('href');
+			const videoIdMatch = url.match(/v=([^&]+)/);
+
+			if (!videoIdMatch?.[1]) {
+				throw new Error('No video id found');
+			}
+
+			return { liveId: videoIdMatch[1] };
+		} catch (error) {
+			return getLiveId(handle, index + 1);
+		}
+	}
+
+	function handleThemeChange() {
+		if (browser) {
+			const currentTheme = localStorage.getItem('theme') || 'dark';
+
+			const iframe = document.querySelector('iframe');
+			if (iframe) {
+				iframe.src =
+					currentTheme === 'dark'
+						? iframe.src.replace('dark', 'light')
+						: iframe.src.replace('light', 'dark');
+			}
+
+			document.body.classList.toggle('dark');
+
+			localStorage.setItem('theme', currentTheme === 'dark' ? 'light' : 'dark');
+		}
+	}
+
+	/**
+	 * Setup the chat iframe
+	 */
+	async function setupChat() {
+		const { liveId } = await getLiveId(user);
+		if (!liveId) return false;
+
+		const url = `https://${useYTStudioURL ? `studio.youtube.com` : `www.youtube.com`}/live_chat?v=${liveId}&is_popout=1&embed_domain=${hostname}&theme=${theme}`;
+
+		const iframeTemplate = document.getElementById('iframe-template');
+		if (!iframeTemplate) return;
+		/** @type {DocumentFragment} */
+		// @ts-ignore
+		const clone = iframeTemplate.content.cloneNode(true);
+		const iframe = clone.querySelector('iframe');
+		iframe.src = url;
+
+		// document.body.appendChild(clone);
+		iframeContainer.appendChild(clone);
+
+		return true;
+	}
+
+	/**
+	 * Setup the no user template
+	 */
+	function setupNoUser() {
+		const noUserTemplate = document.getElementById('no-user-template');
+		if (!noUserTemplate) return;
+		// @ts-ignore
+		// document.body.appendChild(noUserTemplate.content.cloneNode(true));
+		iframeContainer.appendChild(noUserTemplate.content.cloneNode(true));
+	}
+
+	/**
+	 * Setup the no live template
+	 */
+	function setupNoLive() {
+		const noLiveTemplate = document.getElementById('no-live-template');
+		if (!noLiveTemplate) return;
+		// @ts-ignore
+		// document.body.appendChild(noLiveTemplate.content.cloneNode(true));
+		iframeContainer.appendChild(noLiveTemplate.content.cloneNode(true));
+	}
+
+	async function setup() {
+		if (browser) {
+			document.body.classList.toggle('dark', theme !== 'dark');
+			if (!user) {
+				setupNoUser();
+				document.querySelector('.spinner').remove();
+			} else {
+				// document.title = `${user} - Youtube Chat Thing`;
+				const success = await setupChat();
+				if (!success) {
+					setupNoLive();
+					document.querySelector('.spinner').remove();
+				}
+				document.querySelector('iframe').addEventListener('load', () => {
+					document.querySelector('.spinner').remove();
+				});
+			}
+		}
+	}
+
+	setup();
+</script>
+
+<div>
+	<span class="spinner"></span>
+
+	<div class="icons-bar">
+		<!-- <a href="https://github.com/gsporto/youtube-chat-thing" target="_blank">
+      <svg aria-hidden="true" viewBox="0 0 16 16" fill="currentColor">
+        <path
+          d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"
+        />
+      </svg>
+    </a> -->
+
+		<!-- svelte-ignore a11y_consider_explicit_label -->
+		<button on:click={() => handleThemeChange()}>
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="2 2 44 44" fill="currentColor">
+				<g id="Layer_2" data-name="Layer 2">
+					<g id="Icons">
+						<g>
+							<rect width="48" height="48" fill="none"></rect>
+							<g>
+								<path d="M14,24A10,10,0,0,0,24,34V14A10,10,0,0,0,14,24Z"></path>
+								<path
+									d="M24,2A22,22,0,1,0,46,24,21.9,21.9,0,0,0,24,2ZM6,24A18.1,18.1,0,0,1,24,6v8a10,10,0,0,1,0,20v8A18.1,18.1,0,0,1,6,24Z"
+								></path>
+							</g>
+						</g>
+					</g>
+				</g>
+			</svg>
+		</button>
+	</div>
+
+	<template id="iframe-template">
+		<iframe
+			title="yt-chat"
+			frameborder="0"
+			class="chat-iframe"
+			allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+			allowfullscreen
+		></iframe>
+	</template>
+
+	<template id="no-user-template">
+		<h1 class="text">No user provided</h1>
+	</template>
+
+	<template id="no-live-template">
+		<h1 class="text">No Live Found</h1>
+	</template>
+
+	<div bind:this={iframeContainer}></div>
+</div>
+
+<style>
+	* {
+		box-sizing: border-box;
+		padding: 0;
+		margin: 0;
+	}
+
+	:root {
+		--theme-bg: #0f0f0f;
+		--theme-bg-foreground: #f0f0f0;
+	}
+
+	.dark {
+		--theme-bg: #f0f0f0;
+		--theme-bg-foreground: #0f0f0f;
+	}
+
+	/* :global(html),
+	:global(body) {
+		margin: 0;
+		width: 100dvw;
+		height: 100dvh;
+		overflow: hidden;
+		position: relative;
+		background-color: var(--theme-bg);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	} */
+
+	.chat-iframe {
+		width: 100dvw;
+		height: 100dvh;
+		border: none;
+	}
+
+	.text {
+		font-family: sans-serif;
+		color: var(--theme-bg-foreground);
+	}
+
+	.icons-bar {
+		position: absolute;
+		top: 0;
+		right: 50px;
+		height: 48px;
+		display: flex;
+		gap: 8px;
+		align-items: center;
+	}
+
+	.spinner + .icons-bar {
+		display: none;
+	}
+
+	.icons-bar a {
+		display: flex;
+	}
+
+	.icons-bar button {
+		background-color: transparent;
+		border: none;
+	}
+
+	.icons-bar svg {
+		width: 32px;
+		height: 32px;
+		color: var(--theme-bg-foreground);
+	}
+
+	.spinner {
+		width: 48px;
+		height: 48px;
+		border: 5px solid var(--theme-bg-foreground);
+		border-bottom-color: transparent;
+		border-radius: 50%;
+		display: inline-block;
+		box-sizing: border-box;
+		animation: rotation 1s linear infinite;
+		position: fixed;
+	}
+
+	@keyframes rotation {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+</style>
