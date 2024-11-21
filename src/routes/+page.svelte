@@ -4,7 +4,7 @@
   import { browser } from '$app/environment';
 
 	let useYTStudioURL = false;
-	let inputYoutubeUserAt = 'FazLiveAiBx';
+	let inputYoutubeUserAt = 'fazliveaíbx';
 
 	const handlePaste = async () => {
 		try {
@@ -16,7 +16,7 @@
 	};
 
 	const openChatVid = () => {
-		goto(`/youtube-chat?user=@${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`);
+		goto(`/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`);
 	};
 
   const handleClearCookies = () => {
