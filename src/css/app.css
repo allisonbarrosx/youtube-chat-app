@@ -45,7 +45,7 @@
   box-sizing: border-box;
   padding-inline: 0.5em;
   padding-block: 0.7em;
-  max-height:2.75rem;
+  max-height: 2.75rem;
   border: none;
   border-bottom: var(--border-height) solid var(--border-before-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -83,8 +83,8 @@
 
 .input-border-alt {
   height: 3px;
-  background: linear-gradient(90deg, #FF6464 0%, #FFBF59 50%, #47C9FF 100%);
-  transition: width 0.4s cubic-bezier(0.42, 0, 0.58, 1.00);
+  background: linear-gradient(90deg, #ff6464 0%, #ffbf59 50%, #47c9ff 100%);
+  transition: width 0.4s cubic-bezier(0.42, 0, 0.58, 1);
 }
 
 .input-alt:focus + .input-border-alt {
@@ -97,7 +97,7 @@
   overflow: hidden;
   height: 2.75rem;
   padding: 0 2rem;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   background: #3d3a4e;
   background-size: 400%;
   color: #fff;
@@ -139,7 +139,6 @@
   background: rgb(245, 0, 0) 94.3%;
 }
 
-
 /* checkbox settings 👇 */
 
 .ui-checkbox {
@@ -156,9 +155,9 @@
   --checkmark-size: 1.2;
 }
 
-.ui-checkbox, 
-.ui-checkbox *, 
-.ui-checkbox *::before, 
+.ui-checkbox,
+.ui-checkbox *,
+.ui-checkbox *::before,
 .ui-checkbox *::after {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -172,7 +171,8 @@
   height: var(--checkbox-diameter);
   border-radius: var(--checkbox-border-radius);
   background: var(--secondary-color);
-  border: var(--checkbox-border-width) var(--checkbox-border-style) var(--checkbox-border-color);
+  border: var(--checkbox-border-width) var(--checkbox-border-style)
+    var(--checkbox-border-color);
   -webkit-transition: all 0.3s;
   -o-transition: all 0.3s;
   transition: all 0.3s;
@@ -187,7 +187,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  -webkit-box-shadow: 0 0 0 calc(var(--checkbox-diameter) / 2.5) var(--primary-color);
+  -webkit-box-shadow: 0 0 0 calc(var(--checkbox-diameter) / 2.5)
+    var(--primary-color);
   box-shadow: 0 0 0 calc(var(--checkbox-diameter) / 2.5) var(--primary-color);
   border-radius: inherit;
   opacity: 0;
@@ -209,9 +210,15 @@
   -ms-transform: translate(-50%, -50%) rotate(45deg) scale(0);
   transform: translate(-50%, -50%) rotate(45deg) scale(0);
   opacity: 0;
-  -webkit-transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),opacity 0.1s;
-  -o-transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),opacity 0.1s;
-  transition: all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),opacity 0.1s;
+  -webkit-transition:
+    all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),
+    opacity 0.1s;
+  -o-transition:
+    all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),
+    opacity 0.1s;
+  transition:
+    all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),
+    opacity 0.1s;
 }
 
 /* actions */
@@ -227,8 +234,10 @@
 
 .ui-checkbox:checked::before {
   opacity: 1;
-  -webkit-transform: translate(-50%, -50%) rotate(45deg) scale(var(--checkmark-size));
-  -ms-transform: translate(-50%, -50%) rotate(45deg) scale(var(--checkmark-size));
+  -webkit-transform: translate(-50%, -50%) rotate(45deg)
+    scale(var(--checkmark-size));
+  -ms-transform: translate(-50%, -50%) rotate(45deg)
+    scale(var(--checkmark-size));
   transform: translate(-50%, -50%) rotate(45deg) scale(var(--checkmark-size));
   -webkit-transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
   -o-transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;

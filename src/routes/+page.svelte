@@ -28,6 +28,9 @@
 
 <main id="home">
 	<div class="w-auto">
+		<div class="eight">
+			<h1>Style Eight</h1>
+		</div>
 		<div>
 			<label for="ytVidID" class="d-flex mb-2"> Paste Your Channel @ without the @: </label>
 			<div class="d-flex justify-content-between align-items-center mb-2">
@@ -62,3 +65,24 @@
 		</button>
 	</div>
 </main>
+
+<style>
+	.eight h1 {
+  text-align:center;
+ 
+  text-transform:uppercase;
+  font-size:26px; letter-spacing:1px;
+  
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 16px 0;
+  grid-gap: 22px;
+}
+
+.eight h1:after,.eight h1:before {
+  content: " ";
+  display: block;
+  border-bottom: 2px solid #ccc;
+  background-color:#f8f8f8;
+}
+</style>
