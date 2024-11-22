@@ -1,6 +1,6 @@
 :root {
-  --theme-bg: #0f0f0f;
-  --theme-bg-foreground: #f0f0f0;
+  /* --theme-bg: #0f0f0f;
+  --theme-bg-foreground: #f0f0f0; */
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -14,6 +14,16 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --tooltip-bg: #303030;
+  --tooltip-color: #fff;
+  --margin: 0.5rem;
+}
+
+:root body.dark {
+  --tooltip-bg: #fff;
+  --tooltip-color: #5b5b5b;
+  --margin: 0.5rem;
 }
 
 * {
@@ -22,9 +32,51 @@
   margin: 0;
 }
 
-.dark {
-  --theme-bg: #f0f0f0;
-  --theme-bg-foreground: #0f0f0f;
+.pointer {
+  cursor: pointer;
+}
+
+.btn-tooltip {
+  position: relative;
+  transition: all 0.2s;
+  padding: 1rem 0;
+  width: fit-content;
+  box-sizing: border-box;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(1.5 * var(--margin));
+  left: 50%;
+  transform: translateX(-50%) translateY(0%) scale(0);
+  padding: 0.3em 0.6em;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-color);
+  border-radius: 0.5rem;
+  z-index: 99999;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, .60);
+}
+
+.tooltip::before {
+  position: absolute;
+  content: "";
+  height: 0.6em;
+  width: 0.6em;
+  top: -0.2em;
+  left: 50%;
+  transform: translate(-50%) rotate(45deg);
+  background: var(--tooltip-bg);
+  border-bottom-right-radius: 0.175rem;
+}
+
+.btn-tooltip:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(100%) scale(1);
 }
 
 #home {
@@ -38,7 +90,7 @@
 
 /* input */
 .input {
-  color: #fff;
+  color: var(--theme-bg-foreground);
   font-size: 0.9rem;
   background-color: transparent;
   width: 100%;

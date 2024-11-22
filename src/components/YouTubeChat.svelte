@@ -104,6 +104,7 @@
 		const noLiveTemplate = (document.getElementById('no-live-template') as HTMLTemplateElement);
 		if (!noLiveTemplate) return;
 		iframeContainer.appendChild(noLiveTemplate.content.cloneNode(true));
+		document.getElementById('template-goHome')?.addEventListener('click' , () => goto('/'));
 	}
 
 	async function setup(): Promise<void> {
@@ -158,25 +159,18 @@
 	</template>
 
 	<template id="no-live-template">
-		<h1 class="text">No Live Found</h1>
+		<h1 class="text mb-4">No Live Found</h1>
+		<div class="d-flex justify-content-center mb-4">
+			<button id="template-goHome" class="button bg-danger" aria-label="Go back to home">
+				<span class="button-content">Home</span>
+			</button>
+		</div>
 	</template>
 
 	<div bind:this={iframeContainer}></div>
 </div>
 
 <style>
-	:global(body.dark) .btn-tooltip {
-		--tooltip-bg: #fff;
-		--tooltip-color: #5b5b5b;
-		--margin: 0.5rem;
-	}
-
-	:global(body) .btn-tooltip {
-		--tooltip-bg: #303030;
-		--tooltip-color: #fff;
-		--margin: 0.5rem;
-	}
-
 	.pointer {
 		cursor: pointer;
 	}
@@ -232,49 +226,6 @@
 		box-sizing: border-box;
 		animation: rotation 1s linear infinite;
 		position: fixed;
-	}
-
-	.btn-tooltip {
-		position: relative;
-		transition: all 0.2s;
-		padding: 1rem 0;
-		width: fit-content;
-		box-sizing: border-box;
-	}
-
-	.tooltip {
-		position: absolute;
-		bottom: calc(1.5 * var(--margin));
-		left: 50%;
-		transform: translateX(-50%) translateY(0%) scale(0);
-		padding: 0.3em 0.6em;
-		opacity: 0;
-		pointer-events: none;
-		transition: all 0.2s;
-		background: var(--tooltip-bg);
-		color: var(--tooltip-color);
-		border-radius: 0.5rem;
-		z-index: 99999;
-		box-shadow: 1px 1px 5px rgba(0, 0, 0, .60);
-	}
-
-	.tooltip::before {
-		position: absolute;
-		content: "";
-		height: 0.6em;
-		width: 0.6em;
-		top: -0.2em;
-		left: 50%;
-		transform: translate(-50%) rotate(45deg);
-		background: var(--tooltip-bg);
-		border-bottom-right-radius: 0.175rem;
-	}
-
-	.btn-tooltip:hover .tooltip {
-		opacity: 1;
-		visibility: visible;
-		pointer-events: auto;
-		transform: translateX(-50%) translateY(100%) scale(1);
 	}
 
 	@keyframes rotation {
