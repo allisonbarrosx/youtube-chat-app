@@ -49,6 +49,10 @@
   border: none;
   border-bottom: var(--border-height) solid var(--border-before-color);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  outline: none;
+  transition: outline 0.3s ease-in-out, outline-offset 0.3s ease-in-out;
+  outline-offset: 5px; /* Initial offset for a smooth effect */
 }
 
 .input-border {
@@ -89,6 +93,11 @@
 
 .input-alt:focus + .input-border-alt {
   width: 100%;
+}
+
+.input.required {
+  outline: 1px solid red;
+  outline-offset: 0px; 
 }
 
 /* button */
