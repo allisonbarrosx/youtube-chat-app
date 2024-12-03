@@ -1,139 +1,181 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-    import { goto } from '$app/navigation';
+import { browser } from '$app/environment';
+import { goto } from '$app/navigation';
 
-  import '../css/app.css';
+import '../css/app.css';
 
-	export let user: string;
-	export let useYTStudioURL = false;
+export let user: string | undefined;
+export let useYTStudioURL = false;
 
-	let iframeContainer: HTMLDivElement;
+let iframeContainer: HTMLDivElement;
 
-	const hostname = browser && window.location.hostname;
-	const theme = (browser && localStorage.getItem('theme')) || 'dark';
-	const proxies = [
-		'https://corsproxy.io/?',
-		'https://api.codetabs.com/v1/proxy/?quest=',
-		'https://api.allorigins.win/get?url='
-	];
+const hostname = browser ? window.location.hostname : '';
+const theme = browser ? localStorage.getItem('theme') ?? 'dark' : 'dark';
+const proxies = [
+  'https://corsproxy.io/?',
+  'https://api.codetabs.com/v1/proxy/?quest=',
+  'https://api.allorigins.win/get?url='
+];
 
-	/**
-	 * Get the liveId of a youtube channel
-	 * @param {string} userChannel - The userChannel
-	 * @returns {Promise<{ liveId: string | null }>} - The liveId of the channel
-	 */
-	async function getLiveId(userChannel: string, index = 0): Promise<{ liveId: string | null; }> {
-		try {
-			if (index >= proxies.length) return { liveId: null };
-			const html = await fetch(
-				`${proxies[index]}${encodeURIComponent(`https://www.youtube.com/${userChannel}/live`)}`
-			).then(async (v) => {
-				const contentType = v.headers.get('content-type');
-				if (contentType && contentType.includes('application/json')) {
-					const json = await v.json();
-					return json.contents;
-				} else {
-					return v.text();
-				}
-			});
+// Constants for theme values
+const Theme = {
+  DARK: 'dark',
+  LIGHT: 'light',
+} as const;
 
-			const parser = new DOMParser();
-			const doc = parser.parseFromString(html, 'text/html');
+type ThemeType = keyof typeof Theme;
 
-			const linkElement = doc.querySelector('link[rel="canonical"]');
-			const url = linkElement?.getAttribute('href');
-			const videoIdMatch = url?.match(/v=([^&]+)/);
+/**
+ * Fetch the liveId of a YouTube channel.
+ * @param userChannel - The YouTube channel ID or username.
+ * @param index - The proxy index to use for fetching.
+ * @returns The liveId or null if not found.
+ */
+async function getLiveId(userChannel: string, index = 0): Promise<{ liveId: string | null }> {
+  if (index >= proxies.length) {
+    console.error('All proxies failed.');
+    return { liveId: null };
+  }
 
-			if (!videoIdMatch?.[1]) {
-				throw new Error('No video id found');
-			}
+  try {
+    const response = await fetch(
+      `${proxies[index]}${encodeURIComponent(`https://www.youtube.com/${userChannel}/live`)}`
+    );
 
-			return { liveId: videoIdMatch[1] };
-		} catch (error) {
-			return getLiveId(userChannel, index + 1);
-		}
-	}
+    const contentType = response.headers.get('content-type') ?? '';
+    const html = contentType.includes('application/json')
+      ? (await response.json()).contents
+      : await response.text();
 
-	function handleThemeChange(): void {
-		if (browser) {
-			const currentTheme = localStorage.getItem('theme') || 'dark';
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
 
-			const iframe = document.querySelector('iframe');
-			if (iframe) {
-				iframe.src =
-					currentTheme === 'dark'
-						? iframe.src.replace('dark', 'light')
-						: iframe.src.replace('light', 'dark');
-			}
+    const canonicalLink = doc.querySelector('link[rel="canonical"]');
+    const url = canonicalLink?.getAttribute('href');
+    const videoIdMatch = url?.match(/v=([^&]+)/);
 
-			document.body.classList.toggle('dark');
+    if (!videoIdMatch?.[1]) {
+      throw new Error('No video ID found.');
+    }
 
-			localStorage.setItem('theme', currentTheme === 'dark' ? 'light' : 'dark');
-		}
-	}
+    return { liveId: videoIdMatch[1] };
+  } catch (error) {
+    console.warn(`Proxy ${index} failed: ${error}`);
+    return getLiveId(userChannel, index + 1);
+  }
+}
 
-	function goBackHome(): void {
-		goto('/');
-	}
+/**
+ * Toggle the current theme and update the page accordingly.
+ */
+function handleThemeChange(): void {
+  if (!browser) return;
 
-	async function setupChatIframe(): Promise<boolean | undefined> {
-		const { liveId } = await getLiveId(user);
-		if (!liveId) return false;
+  const currentTheme = (localStorage.getItem('theme') as ThemeType) ?? Theme.DARK;
+  const newTheme = currentTheme === Theme.DARK.toLocaleLowerCase() ? Theme.LIGHT : Theme.DARK;
 
-		const url = `https://${useYTStudioURL === true ? `studio.youtube.com` : `www.youtube.com`}/live_chat?v=${liveId}&is_popout=1&embed_domain=${hostname}&theme=${theme}`;
+  const iframe = document.querySelector<HTMLIFrameElement>('iframe');
+  if (iframe) {
+    iframe.src = iframe.src.replace(currentTheme, newTheme);
+  }
 
-		const iframeTemplate = (document.getElementById('iframe-template') as HTMLTemplateElement);
-		if (!iframeTemplate) return;
-		
-		const clone = iframeTemplate.content.cloneNode(true);
-		const iframe = (clone as HTMLElement).querySelector('iframe') ?? { src: '' };
-		iframe.src = url;
+  document.body.classList.toggle(Theme.DARK);
+  localStorage.setItem('theme', newTheme);
+}
 
-		iframeContainer.appendChild(clone);
+/**
+ * Redirect the user back to the homepage.
+ */
+function goBackHome(): void {
+  goto('/');
+}
 
-		return true;
-	}
+/**
+ * Setup the chat iframe for live streaming.
+ * @returns True if successful, otherwise false.
+ */
+async function setupChatIframe(): Promise<boolean> {
+  const { liveId } = await getLiveId(user ?? '');
+  if (!liveId) return false;
 
-	function setupNoUser(): void {
-		const noUserTemplate = (document.getElementById('no-user-template') as HTMLTemplateElement);
-		if (!noUserTemplate) return;
-		iframeContainer.appendChild(noUserTemplate.content.cloneNode(true));
-	}
+  const url = `https://${useYTStudioURL ? 'studio.youtube.com' : 'www.youtube.com'}/live_chat?v=${liveId}&is_popout=1&embed_domain=${hostname}&theme=${theme}`;
 
-	function setupNoLive(): void {
-		const noLiveTemplate = (document.getElementById('no-live-template') as HTMLTemplateElement);
-		if (!noLiveTemplate) return;
-		iframeContainer.appendChild(noLiveTemplate.content.cloneNode(true));
-		document.getElementById('template-goHome')?.addEventListener('click' , () => goto('/'));
-	}
+  const iframeTemplate = document.getElementById('iframe-template') as HTMLTemplateElement | null;
+  if (!iframeTemplate) {
+    console.error('Iframe template not found.');
+    return false;
+  }
 
-	async function setup(): Promise<void> {
-		if (browser) {
-			if (!user) {
-				setupNoUser();
-				document?.querySelector('.spinner')?.remove();
-			} else {
-				document.title = `${user} - Youtube Live Chat`;
-				const success = await setupChatIframe();
-				if (!success) {
-					setupNoLive();
-					document?.querySelector('.spinner')?.remove();
-				}
+  const clone = iframeTemplate.content.cloneNode(true) as DocumentFragment;
+  const iframe = clone.querySelector('iframe');
+  if (!iframe) {
+    console.error('Iframe element missing in template.');
+    return false;
+  }
 
-				document?.querySelector('iframe')?.addEventListener('load', () => {
-					document?.querySelector('.spinner')?.remove();
-				});
-			}
-		}
-	}
+  iframe.src = url;
+  iframeContainer.appendChild(clone);
 
-	document.body.classList.add(theme);
-	setup();
+  return true;
+}
+
+/**
+ * Setup the "No User" template.
+ */
+function setupNoUser(): void {
+  const noUserTemplate = document.getElementById('no-user-template') as HTMLTemplateElement | null;
+  if (!noUserTemplate) {
+    console.error('No-user template not found.');
+    return;
+  }
+
+  iframeContainer.appendChild(noUserTemplate.content.cloneNode(true));
+}
+
+/**
+ * Setup the "No Live" template.
+ */
+function setupNoLive(): void {
+  const noLiveTemplate = document.getElementById('no-live-template') as HTMLTemplateElement | null;
+  if (!noLiveTemplate) {
+    console.error('No-live template not found.');
+    return;
+  }
+
+  iframeContainer.appendChild(noLiveTemplate.content.cloneNode(true));
+  document.getElementById('template-goHome')?.addEventListener('click', goBackHome);
+}
+
+/**
+ * Initial setup function to configure the application.
+ */
+async function setup(): Promise<void> {
+  if (!browser) return;
+
+  document.body.classList.add(theme);
+
+  if (!user) {
+    setupNoUser();
+  } else {
+    document.title = `${user} - YouTube Live Chat`;
+    const success = await setupChatIframe();
+    if (!success) {
+      setupNoLive();
+    }
+  }
+
+  document.querySelector('.spinner')?.remove();
+}
+
+// Initialize the application
+setup();
+
 </script>
 
 <div>
 	<span class="spinner"></span>
 	<div class="icons-bar">
+
 		<button on:click={goBackHome} aria-label="Go back to home" class="pointer btn-tooltip">
 			<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}><g fill="none" fill-rule="evenodd"><path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"/><path fill="#888888" d="M10.671 2.843a2 2 0 0 1 2.658 0l3.934 3.497l.25-1.504a1 1 0 1 1 1.973.328L19.03 7.91l2.635 2.343a1 1 0 0 1-1.328 1.494l-.464-.412l-.787 7.864A2 2 0 0 1 17.095 21H6.905a2 2 0 0 1-1.99-1.801l-.786-7.864l-.465.412a1 1 0 0 1-1.328-1.494zM5.957 9.71q.028.092.038.191l.91 9.1h10.19l.91-9.1q.01-.1.038-.19L12 4.337z"/></g></svg>
 			<span class="tooltip">Home</span>
