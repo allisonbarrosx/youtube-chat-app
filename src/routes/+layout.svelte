@@ -2,6 +2,7 @@
   	import '../css/app.css';
     import 'bootstrap/dist/css/bootstrap-utilities.css';
     import 'bootstrap/dist/css/bootstrap-grid.css';
+    // import 'bootstrap/dist/css/bootstrap.css';
     import { browser } from '$app/environment';
 
     const theme = (browser && localStorage.getItem('theme')) || 'dark';
