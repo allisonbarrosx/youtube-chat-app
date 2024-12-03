@@ -1,11 +1,12 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { Theme } from "../shared/constants";
-  import type { ThemeType } from "../shared/constants";
+  // import type { ThemeType } from "../shared/constants";
   import "../css/app.css";
-    import { onMount } from "svelte";
+  import { onMount } from "svelte";
 
-  export let user: string | undefined;
+  export let user: string | null | undefined;
+  export let containerWidth: string = '100dvw';
 
   let iframeContainer: HTMLDivElement;
 
@@ -99,6 +100,7 @@
       class="chat-iframe"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
+      style="--containerWidth: {containerWidth}"
     ></iframe>
   </template>
 
@@ -111,7 +113,7 @@
 
 <style>
   .chat-iframe {
-    width: 100dvw;
+    width: var(--containerWidth);
     height: 100dvh;
     border: none;
     display: block;

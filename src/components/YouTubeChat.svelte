@@ -8,6 +8,7 @@
 
   export let user: string | null | undefined;
   export let useYTStudioURL: boolean;
+  export let containerWidth: string = '100dvw';
 
   let iframeContainer: HTMLDivElement;
 
@@ -235,6 +236,7 @@
       class="chat-iframe"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
+      style="--containerWidth: {containerWidth}"
     ></iframe>
   </template>
 
@@ -264,7 +266,7 @@
   }
 
   .chat-iframe {
-    width: 100dvw;
+    width: var(--containerWidth);
     height: 100dvh;
     border: none;
     display: block;
