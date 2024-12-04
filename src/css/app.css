@@ -79,13 +79,8 @@
   transform: translateX(-50%) translateY(100%) scale(1);
 }
 
-main {
-  width: 100dvw;
-}
-
 #home {
-  /* /* max-width: 1280px; */
-  max-width: 80dvw;
+  max-width: 1280px;
   height: 90vh;
   margin: 0 auto;
   padding: 2rem;
