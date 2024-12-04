@@ -5,7 +5,6 @@
 
   let useYTStudioURL = false;
   let inputYoutubeUserAt = "fazliveaíbx";
-  let inputTwitchUser = 'sadixbx';
 
   const handlePaste = async () => {
     try {
@@ -20,13 +19,6 @@
 		if (!inputYoutubeUserAt) return;
 		goto(
 			`/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
-		);
-  };
-
-  const openTwitchChat = () => {
-		if (!inputTwitchUser) return;
-		goto(
-			`/twitch-chat?user=${inputTwitchUser}`,
 		);
   };
 
@@ -56,7 +48,7 @@
     <div class="eight mb-4">
       <h1>Youtube Live Chat</h1>
     </div>
-    <div class="mb-4">
+    <div>
       <label for="ytVidID" class="d-flex mb-2">
         Paste Your Channel @ without the @:
       </label>
@@ -87,27 +79,6 @@
         >
       </div>
       <button class="button w-100" on:click={openChatVid}>
-        <span class="button-content">Open</span>
-      </button>
-    </div>
-    <div class="mb-4 twitch">
-      <label for="twitchUserId" class="d-flex mb-2">
-        Paste Your Twtich Channel:
-      </label>
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <div class="form-control">
-          <input
-            id="twitchUserId"
-            type="text"
-            placeholder="Paste Your Twitch"
-            class="input input-alt"
-						class:required={!inputTwitchUser}
-            bind:value={inputTwitchUser}
-          />
-          <span class="input-border input-border-alt"></span>
-        </div>
-      </div>
-      <button class="button w-100" on:click={openTwitchChat}>
         <span class="button-content">Open</span>
       </button>
     </div>
