@@ -115,7 +115,8 @@
 
 <style>
   .chat-iframe {
-    width: var(--containerWidth);
+    /* width: var(--containerWidth); */
+    width: 100%;
     height: 100dvh;
     border: none;
     display: block;
