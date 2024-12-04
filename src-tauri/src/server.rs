@@ -1,3 +1,10 @@
+// pub async fn start_server() {
+//   let static_files_route = warp::fs::dir("../../build");
+
+//   // Start the server
+//   warp::serve(static_files_route).run(([127, 0, 0, 1], 8080)).await;
+// }
+
 use warp::Filter;
 use std::net::SocketAddr;
 use std::path::Path;

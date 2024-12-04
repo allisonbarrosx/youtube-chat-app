@@ -2,6 +2,9 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "enables the default permissions",
-  "windows": ["main"],
+  "windows": ["main", "main_new"],
+  "remote": {
+    "urls": ["https://*.tauri.app"]
+  },
   "permissions": ["core:default"]
 }

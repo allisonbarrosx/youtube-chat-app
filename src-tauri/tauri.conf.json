@@ -12,14 +12,18 @@
   "app": {
     "windows": [
       {
+        "devtools": true,
         "title": "Youtube Chat Live",
-        "width": 800,
-        "height": 800,
+        "width": 0,
+        "height": 0,
         "resizable": true,
         "fullscreen": false,
         "zoomHotkeysEnabled": true
       }
-    ]
+    ],
+    "security": {
+      "csp": null
+    }
   },
   "bundle": {
     "active": true,
