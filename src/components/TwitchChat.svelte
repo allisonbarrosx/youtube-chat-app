@@ -24,8 +24,7 @@
   async function setupChatIframe(): Promise<boolean> {
     if (!user) return false;
 
-    const url = `http://localhost:3000/twitch-chat?channel=${user}`;
-    // const url = `https://www.twitch.tv/embed/${user}/chat?parent=${hostname}${theme === Theme.DARK ? "&darkpopout" : ""}`;
+    const url = `https://www.twitch.tv/embed/${user}/chat?parent=${hostname}${theme === Theme.DARK ? "&darkpopout" : ""}`;
     // const url = `https://www.twitch.tv/popout/${user}/chat?popout=${theme === Theme.DARK ? "&darkpopout" : ""}`;
 
     const iframeTemplate = document.getElementById(
@@ -46,9 +45,8 @@
       return false;
     }
 
-    // iframe.src = url;
-    // @ts-ignore
-    iframeContainer.appendChild(await fetch(url));
+    iframe.src = url;
+    iframeContainer.appendChild(clone);
 
     return true;
   }
@@ -101,9 +99,9 @@
       title="twitch-chat"
       frameborder="0"
       class="chat-iframe"
+      style="--containerWidth: {containerWidth}"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
-      style="--containerWidth: {containerWidth}"
       sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
     ></iframe>
   </template>
