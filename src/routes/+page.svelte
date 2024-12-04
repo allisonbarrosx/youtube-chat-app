@@ -2,7 +2,6 @@
   // @ts-nocheck
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
-    import CombinedButton from "$lib/CombinedButton.svelte";
 
   let useYTStudioURL = false;
   let inputYoutubeUserAt = "fazliveaíbx";
@@ -118,9 +117,6 @@
     </div>
   </div>
   <div class="fixed-bottom mb-4">
-    <div class="mb-4 px-4 combined-chats">
-      <CombinedButton onClick={openCombinedChats}/>
-    </div>
     <button class="button bg-danger" on:click={handleClearCookies}>
       <span class="button-content">🗑 Clear Data</span>
     </button>
