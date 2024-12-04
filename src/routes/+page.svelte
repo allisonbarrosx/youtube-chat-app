@@ -5,7 +5,7 @@
 
   let useYTStudioURL = false;
   let inputYoutubeUserAt = "fazliveaíbx";
-  let inputTwitchUser = "sadixbx";
+  let inputTwitchUser = 'sadixbx';
 
   const handlePaste = async () => {
     try {
@@ -17,22 +17,17 @@
   };
 
   const openChatVid = () => {
-    if (!inputYoutubeUserAt) return;
-    goto(
-      `/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
-    );
+		if (!inputYoutubeUserAt) return;
+		goto(
+			`/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
+		);
   };
 
   const openTwitchChat = () => {
-    if (!inputTwitchUser) return;
-    goto(`/twitch-chat?user=${inputTwitchUser}`);
-  };
-
-  const openCombinedChats = () => {
-    if (!inputTwitchUser && inputYoutubeUserAt) return;
-    goto(
-      `/combined-chats?twitchUser=${inputTwitchUser}&youtubeUser=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
-    );
+		if (!inputTwitchUser) return;
+		goto(
+			`/twitch-chat?user=${inputTwitchUser}`,
+		);
   };
 
   const handleClearCookies = () => {
