@@ -22,5 +22,3 @@ vite.config.ts.timestamp-*
 
 # Tauri
 /src-tauri/target
-
-add_later.html

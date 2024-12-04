@@ -5,7 +5,6 @@
 
   let useYTStudioURL = false;
   let inputYoutubeUserAt = "fazliveaíbx";
-  let inputTwitchUser = 'sadixbx';
 
   const handlePaste = async () => {
     try {
@@ -20,13 +19,6 @@
 		if (!inputYoutubeUserAt) return;
 		goto(
 			`/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
-		);
-  };
-
-  const openTwitchChat = () => {
-		if (!inputTwitchUser) return;
-		goto(
-			`/twitch-chat?user=${inputTwitchUser}`,
 		);
   };
 
