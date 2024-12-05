@@ -59,18 +59,19 @@
   })
 </script>
 
-<div>
+<div class="h-100">
   {#if (!iframeURL && successfulFoundLive == undefined)}
     <div class="spinner-wrapper dvh-90 d-flex justify-content-center align-items-center">
       <span class="spinner"></span>
     </div>
   {:else if (iframeURL && successfulFoundLive)}
+  <!-- style="--containerWidth: {containerWidth}" -->
     <iframe
+      id="ttv-chat-iframe"
       title="twitch-chat"
       src={iframeURL}
       frameborder="0"
       class="chat-iframe"
-      style="--containerWidth: {containerWidth}"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
       sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
@@ -104,7 +105,7 @@
   .chat-iframe {
     /* width: var(--containerWidth); */
     width: 100%;
-    height: 100dvh;
+    height: 100%;
     border: none;
     display: block;
   }

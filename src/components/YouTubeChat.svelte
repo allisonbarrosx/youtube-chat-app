@@ -177,18 +177,19 @@
   setup();
 </script>
 
-<div>
+<div class="h-100">
   <div class="spinner-wrapper dvh-90 d-flex justify-content-center align-items-center">
     <span class="spinner"></span>
   </div>
   <template id="iframe-template">
+    <!-- style="--containerWidth: {containerWidth}" -->
     <iframe
+      id="yt-chat-iframe"
       title="yt-chat"
       frameborder="0"
       class="chat-iframe"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
-      style="--containerWidth: {containerWidth}"
     ></iframe>
   </template>
 
@@ -211,7 +212,7 @@
     </div>
   </template>
 
-  <div bind:this={iframeContainer}></div>
+  <div class="w-100 h-100" bind:this={iframeContainer}></div>
 </div>
 
 <style>
@@ -219,7 +220,7 @@
   .chat-iframe {
     /* width: var(--containerWidth); */
     width: 100%;
-    height: 100dvh;
+    height: 100%;
     border: none;
     display: block;
   }
