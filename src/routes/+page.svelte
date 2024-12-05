@@ -160,25 +160,4 @@
     border-bottom: 2px solid #ccc;
     background-color: transparent;
   }
-
-  .icons-bar {
-    position: absolute;
-    top: 0;
-    right: 50px;
-    height: 48px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .icons-bar button {
-    background-color: transparent;
-    border: none;
-  }
-
-  .icons-bar svg {
-    width: 32px;
-    height: 32px;
-    color: var(--theme-bg-foreground);
-  }
 </style>

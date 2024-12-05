@@ -7,7 +7,6 @@
   import "../css/app.css";
 
   export let user: string | null | undefined;
-  export let containerWidth: string = '100dvw';
 
   let iframeURL: string | null;
   let successfulFoundLive: boolean;
@@ -46,7 +45,7 @@
       }
     }
 
-    document.querySelector(".spinner")?.remove();
+    document.querySelector(".spinner-wrapper-ttv")?.remove();
   }
 
   function goBackHome(): void {
@@ -61,7 +60,7 @@
 
 <div class="h-100">
   {#if (!iframeURL && successfulFoundLive == undefined)}
-    <div class="spinner-wrapper dvh-90 d-flex justify-content-center align-items-center">
+    <div class="spinner-wrapper-ttv dvh-90 d-flex justify-content-center align-items-center">
       <span class="spinner"></span>
     </div>
   {:else if (iframeURL && successfulFoundLive)}
@@ -74,6 +73,7 @@
       class="chat-iframe"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
+      allowtransparency={true}
       sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
     ></iframe>
   {/if}
@@ -108,6 +108,8 @@
     height: 100%;
     border: none;
     display: block;
+    position: relative;
+    z-index: 999;
   }
 
   .text {

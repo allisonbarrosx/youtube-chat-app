@@ -19,8 +19,8 @@
       if (!isResizing) return; // Only adjust widths if resizing is active
 
       const newWidth = ((e.clientX / window.innerWidth) * 100); // Calculate percentage width
-      iframe1Width = newWidth;
-      iframe2Width = 100 - newWidth;
+      iframe1Width = Math.max(5, Math.min(95, newWidth)); // Clamp widths to avoid extremes
+      iframe2Width = 100 - iframe1Width;
     };
 
     // Start resizing
@@ -55,12 +55,14 @@
   <div id="youtube-wrapper" class="resizeable-chat" style="flex-basis: {iframe1Width}%;">
     <YouTubeChat bind:user={youtubeUser} {useYTStudioURL}/>
     <div
-      class="iframe-overlay {isResizing ? 'active' : ''}"
+    class="iframe-overlay {isResizing ? 'active' : ''}"
     ></div>
   </div>
+
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="resizer" style="left: {iframe1Width}%" on:mousedown={() => startResize()}></div>
+
   <div id="twitch-wrapper" class="resizeable-chat" style="flex-basis: {iframe2Width}%;">
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="resizer" on:mousedown={() => startResize()}></div>
     <TwitchChat bind:user={twitchUser} />
     <div
       class="iframe-overlay {isResizing ? 'active' : ''}"
@@ -71,18 +73,23 @@
 <style>
   .resizeable-chat {
     overflow: hidden; 
-    height: 95dvh; 
+    height: 95dvh;
+    /* position: relative; */
   }
 
   .resizer {
     width: 10px;
+    border-radius: 3px;
     cursor: ew-resize;
-    background-color: #aaa;
+    background-color: #3d1f5f;
     position: absolute;
-    /* top: 0; */
-    bottom: -7px;
-    z-index: 10;
+    z-index: 9999;
     height: 95dvh;
+    left: calc(50% - 5px); /* Center the resizer initially */
+  }
+
+  .resizer:hover {
+    background-color: #ff00e6;
   }
 
   .iframe-overlay {

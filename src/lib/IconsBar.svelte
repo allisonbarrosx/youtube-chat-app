@@ -93,11 +93,7 @@
   }
 
   .icons-bar {
-    /* position: absolute;
-    top: 0;
-    right: 50px; */
-    height: 48px;
-    /* display: flex; */
+    height: 5dvh;
     gap: 8px;
     align-items: center;
   }

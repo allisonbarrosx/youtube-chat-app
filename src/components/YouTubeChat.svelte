@@ -9,7 +9,6 @@
 
   export let user: string | null | undefined;
   export let useYTStudioURL: boolean;
-  export let containerWidth: string = '100dvw';
 
   let iframeContainer: HTMLDivElement;
 
@@ -170,7 +169,7 @@
       }
     }
 
-    document.querySelector(".spinner-wrapper")?.remove();
+    document.querySelector(".spinner-wrapper-yt")?.remove();
   }
 
   // Initialize the application
@@ -178,7 +177,7 @@
 </script>
 
 <div class="h-100">
-  <div class="spinner-wrapper dvh-90 d-flex justify-content-center align-items-center">
+  <div class="spinner-wrapper-yt dvh-90 d-flex justify-content-center align-items-center">
     <span class="spinner"></span>
   </div>
   <template id="iframe-template">
