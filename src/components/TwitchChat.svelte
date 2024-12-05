@@ -1,69 +1,33 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { Theme } from "../shared/constants";
-  // import type { ThemeType } from "../shared/constants";
-  import "../css/app.css";
+  import { proxies } from "../shared/constants";
   import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import "../css/app.css";
 
   export let user: string | null | undefined;
   export let containerWidth: string = '100dvw';
 
-  let iframeContainer: HTMLDivElement;
+  let iframeURL: string | null;
+  let successfulFoundLive: boolean;
 
   const hostname = browser ? window.location.hostname : "localhost";
   const theme = browser ? (localStorage.getItem("theme") ?? "dark") : "dark";
 
-  /**
-   *  ?darkpopout // darkmode
-   *  <iframe src="https://www.twitch.tv/embed/<channel>/chat?parent=<parent>"
-        height="<height>"
-        width="<width>">
-      </iframe>
-  */
-
-  async function setupChatIframe(): Promise<boolean> {
+  async function setupIframeURL(index = 0): Promise<boolean> {
     if (!user) return false;
-
-    const url = `https://www.twitch.tv/embed/${user}/chat?parent=${hostname}${theme === Theme.DARK ? "&darkpopout" : ""}`;
     // const url = `https://www.twitch.tv/popout/${user}/chat?popout=${theme === Theme.DARK ? "&darkpopout" : ""}`;
-
-    const iframeTemplate = document.getElementById(
-      "iframe-template",
-    ) as HTMLTemplateElement | null;
-
-    console.log('iframeTemplate: ', iframeTemplate)
-
-    if (!iframeTemplate) {
-      console.error("Iframe template not found.");
-      return false;
-    }
-
-    const clone = iframeTemplate.content.cloneNode(true) as DocumentFragment;
-    const iframe = clone.querySelector("iframe");
-    if (!iframe) {
-      console.error("Iframe element missing in template.");
-      return false;
-    }
-
-    iframe.src = url;
-    iframeContainer.appendChild(clone);
-
-    return true;
-  }
-
-  /**
-   * Setup the "No User" template.
-   */
-  function setupNoUser(): void {
-    const noUserTemplate = document.getElementById(
-      "no-user-template",
-    ) as HTMLTemplateElement | null;
-    if (!noUserTemplate) {
-      console.error("No-user template not found.");
-      return;
-    }
-
-    iframeContainer.appendChild(noUserTemplate.content.cloneNode(true));
+    try {
+        const response = await fetch(
+          `${proxies[index]}${encodeURIComponent(`https://www.twitch.tv/embed/${user}/chat?parent=${hostname}`)}`,
+        );
+        return response.ok;
+    } catch (error) {
+      console.warn(`Proxy ${index} failed: ${error}`);
+      if (index >= proxies.length) return false;
+      else return setupIframeURL(index + 1);
+    } 
   }
 
   /**
@@ -74,16 +38,20 @@
 
     document.body.classList.add(theme);
 
-    if (!user) {
-      setupNoUser();
-    } else {
+    if (user) {
       document.title = `${user} - Twitch Live Chat`;
-      await setupChatIframe();
+      successfulFoundLive = await setupIframeURL();
+      if (successfulFoundLive) {
+        iframeURL = `https://www.twitch.tv/embed/${user}/chat?parent=${hostname}${theme === Theme.DARK ? "&darkpopout" : ""}`;
+      }
     }
 
     document.querySelector(".spinner")?.remove();
   }
 
+  function goBackHome(): void {
+    goto("/");
+  }
   
   onMount(() => {
     // Initialize the application
@@ -92,11 +60,14 @@
 </script>
 
 <div>
-  <span class="spinner"></span>
-
-  <template id="iframe-template">
+  {#if (!iframeURL && successfulFoundLive == undefined)}
+    <div class="spinner-wrapper dvh-90 d-flex justify-content-center align-items-center">
+      <span class="spinner"></span>
+    </div>
+  {:else if (iframeURL && successfulFoundLive)}
     <iframe
       title="twitch-chat"
+      src={iframeURL}
       frameborder="0"
       class="chat-iframe"
       style="--containerWidth: {containerWidth}"
@@ -104,13 +75,29 @@
       allowfullscreen
       sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-modals"
     ></iframe>
-  </template>
+  {/if}
 
-  <template id="no-user-template">
-    <h1 class="text">No user provided</h1>
-  </template>
+  {#if !user}
+    <template id="no-user-template">
+      <h1 class="text">No user provided</h1>
+    </template>
+  {/if}
 
-  <div bind:this={iframeContainer}></div>
+  {#if (successfulFoundLive === false)}
+      <div class="dvh-90 d-flex flex-column justify-content-center align-items-center">
+        <h1 class="text d-flex justify-content-center mb-4">No Live Found</h1>
+        <div class="d-flex justify-content-center mb-4">
+          <button
+            id="template-goHome"
+            class="button"
+            aria-label="Go back to home"
+            on:click={goBackHome}
+          >
+            <span class="button-content">Home</span>
+          </button>
+        </div>
+      </div>
+  {/if}
 </div>
 
 <style>

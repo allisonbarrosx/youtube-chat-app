@@ -201,6 +201,14 @@ main {
   transition: all 0.475s;
 }
 
+.button.yt::before {
+  background: linear-gradient(
+    82.3deg,
+    rgb(170, 62, 62) 10.8%,
+    rgb(233, 93, 93) 94.3%
+  );
+}
+
 .button.bg-danger::before {
   background: rgb(245, 0, 0) 94.3%;
 }
@@ -317,4 +325,8 @@ main {
   box-shadow: none;
   transition: none;
   opacity: 1;
+}
+
+.dvh-90 {
+  height: 90dvh;
 }

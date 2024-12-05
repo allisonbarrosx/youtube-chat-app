@@ -47,7 +47,6 @@
 <div class="d-flex">
   <div class="resizeable-chat" style="flex-basis: {iframe1Width}%;">
     <YouTubeChat bind:user={youtubeUser} {useYTStudioURL}/>
-
   </div>
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class="resizer" on:mousedown={startResize}></div>
