@@ -57,7 +57,7 @@
   <div id="youtube-wrapper" class="resizeable-chat" style="flex-basis: {iframe1Width}%;">
     <YouTubeChat bind:user={youtubeUser} {useYTStudioURL}/>
     <div
-    class="iframe-overlay {isResizing ? 'active' : ''}"
+    class="iframe-overlay {isResizing ? 'active z-index-top' : ''}"
     ></div>
   </div>
 
@@ -67,7 +67,7 @@
   <div id="twitch-wrapper" class="resizeable-chat" style="flex-basis: {iframe2Width}%;">
     <TwitchChat bind:user={twitchUser} />
     <div
-      class="iframe-overlay {isResizing ? 'active' : ''}"
+      class="iframe-overlay {isResizing ? 'active z-index-top' : ''}"
     ></div>
   </div>
 </div>
@@ -85,7 +85,7 @@
     cursor: ew-resize;
     background-color: #3d1f5f;
     position: absolute;
-    z-index: 9999;
+    z-index: 99;
     height: 95dvh;
     /* left: calc(50% - 5px); Center the resizer initially */
   }
@@ -101,8 +101,11 @@
     right: 0;
     bottom: 0;
     background: rgba(255, 255, 255, 0); /* Transparent overlay */
-    z-index: 99999;
     pointer-events: none; /* Prevent interaction with overlay */
+  }
+  
+  .z-index-top {
+    z-index: 999;
   }
 
   .iframe-overlay.active {
