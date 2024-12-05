@@ -11,6 +11,7 @@
   // const containerWidth = '50dvw';
   let iframe1Width = 50; // Initial width of the first iframe
   let iframe2Width = 50; // Initial width of the second iframe
+  let resizerLeftPos = 50;
 
   
   let isResizing = false; // Flag to track resizing state
@@ -21,6 +22,7 @@
       const newWidth = ((e.clientX / window.innerWidth) * 100); // Calculate percentage width
       iframe1Width = Math.max(5, Math.min(95, newWidth)); // Clamp widths to avoid extremes
       iframe2Width = 100 - iframe1Width;
+      resizerLeftPos = iframe1Width;
     };
 
     // Start resizing
@@ -60,7 +62,7 @@
   </div>
 
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="resizer" style="left: {iframe1Width}%" on:mousedown={() => startResize()}></div>
+  <div class="resizer" style="left: {resizerLeftPos}%" on:mousedown={() => startResize()}></div>
 
   <div id="twitch-wrapper" class="resizeable-chat" style="flex-basis: {iframe2Width}%;">
     <TwitchChat bind:user={twitchUser} />
@@ -85,7 +87,7 @@
     position: absolute;
     z-index: 9999;
     height: 95dvh;
-    left: calc(50% - 5px); /* Center the resizer initially */
+    /* left: calc(50% - 5px); Center the resizer initially */
   }
 
   .resizer:hover {
@@ -99,7 +101,7 @@
     right: 0;
     bottom: 0;
     background: rgba(255, 255, 255, 0); /* Transparent overlay */
-    z-index: 20;
+    z-index: 99999;
     pointer-events: none; /* Prevent interaction with overlay */
   }
 

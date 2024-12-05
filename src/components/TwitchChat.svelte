@@ -58,7 +58,7 @@
   })
 </script>
 
-<div class="h-100">
+<div class="h-100 d-flex justify-content-end">
   {#if (!iframeURL && successfulFoundLive == undefined)}
     <div class="spinner-wrapper-ttv dvh-90 d-flex justify-content-center align-items-center">
       <span class="spinner"></span>
@@ -104,7 +104,7 @@
 <style>
   .chat-iframe {
     /* width: var(--containerWidth); */
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100%;
     border: none;
     display: block;
