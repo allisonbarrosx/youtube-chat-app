@@ -12,9 +12,10 @@
   "app": {
     "windows": [
       {
+        "devtools": true,
         "title": "Youtube Chat Live",
-        "width": 800,
-        "height": 600,
+        "width": 0,
+        "height": 0,
         "resizable": true,
         "fullscreen": false,
         "zoomHotkeysEnabled": true

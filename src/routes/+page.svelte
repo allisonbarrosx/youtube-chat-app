@@ -2,9 +2,11 @@
   // @ts-nocheck
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
+    import CombinedButton from "$lib/CombinedButton.svelte";
 
   let useYTStudioURL = false;
   let inputYoutubeUserAt = "fazliveaíbx";
+  let inputTwitchUser = "sadixbx";
 
   const handlePaste = async () => {
     try {
@@ -16,10 +18,22 @@
   };
 
   const openChatVid = () => {
-		if (!inputYoutubeUserAt) return;
-		goto(
-			`/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
-		);
+    if (!inputYoutubeUserAt) return;
+    goto(
+      `/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
+    );
+  };
+
+  const openTwitchChat = () => {
+    if (!inputTwitchUser) return;
+    goto(`/twitch-chat?user=${inputTwitchUser}`);
+  };
+
+  const openCombinedChats = () => {
+    if (!inputTwitchUser && inputYoutubeUserAt) return;
+    goto(
+      `/combined-chats?twitchUser=${inputTwitchUser}&youtubeUser=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
+    );
   };
 
   const handleClearCookies = () => {
@@ -28,62 +42,85 @@
     }
   };
 
-	const handleThemeChange = () => {
-		if (browser) {
-			const currentTheme = localStorage.getItem('theme') || 'dark';
-			document.body.classList.toggle('dark');
-			localStorage.setItem('theme', currentTheme === 'dark' ? 'light' : 'dark');
-		}
-	}
+  // const handleThemeChange = () => {
+  //   if (browser) {
+  //     const currentTheme = localStorage.getItem("theme") || "dark";
+  //     document.body.classList.toggle("dark");
+  //     localStorage.setItem("theme", currentTheme === "dark" ? "light" : "dark");
+  //   }
+  // };
 </script>
 
 <main id="home">
   <div class="w-auto">
-		<div class="icons-bar">
-			<button on:click={handleThemeChange} aria-label="Theme changer" class="pointer btn-tooltip">
-				<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...$$props}><path fill="#888888" d="M20.958 15.325c.204-.486-.379-.9-.868-.684a7.7 7.7 0 0 1-3.101.648c-4.185 0-7.577-3.324-7.577-7.425a7.3 7.3 0 0 1 1.134-3.91c.284-.448-.057-1.068-.577-.936C5.96 4.041 3 7.613 3 11.862C3 16.909 7.175 21 12.326 21c3.9 0 7.24-2.345 8.632-5.675"/><path fill="#888888" d="M15.611 3.103c-.53-.354-1.162.278-.809.808l.63.945a2.33 2.33 0 0 1 0 2.588l-.63.945c-.353.53.28 1.162.81.808l.944-.63a2.33 2.33 0 0 1 2.588 0l.945.63c.53.354 1.162-.278.808-.808l-.63-.945a2.33 2.33 0 0 1 0-2.588l.63-.945c.354-.53-.278-1.162-.809-.808l-.944.63a2.33 2.33 0 0 1-2.588 0z"/></svg>
-				<span class="tooltip">Change Theme</span>
-			</button>
-		</div>
-    <div class="eight mb-4">
-      <h1>Youtube Live Chat</h1>
-    </div>
-    <div>
-      <label for="ytVidID" class="d-flex mb-2">
-        Paste Your Channel @ without the @:
-      </label>
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <div class="form-control">
-          <input
-            id="ytVidID"
-            type="text"
-            placeholder="Paste Your Channel @"
-            class="input input-alt"
-						class:required={!inputYoutubeUserAt}
-            bind:value={inputYoutubeUserAt}
-          />
-          <span class="input-border input-border-alt"></span>
+    <div class="d-flex flex-xl-row flex-column mb-2">
+      <div class="mb-4 px-4 youtube-section w-lg-50 w-100">
+        <div class="eight mb-4">
+          <h1>Youtube Live Chat</h1>
         </div>
-        <button type="button" class="button" on:click={handlePaste}>
-          <span class="button-content">⎘ Paste</span>
+        <label for="ytVidID" class="d-flex mb-2">
+          Paste Your Channel @ without the @:
+        </label>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="form-control">
+            <input
+              id="ytVidID"
+              type="text"
+              placeholder="Paste Your Channel @"
+              class="input input-alt"
+              class:required={!inputYoutubeUserAt}
+              bind:value={inputYoutubeUserAt}
+            />
+            <span class="input-border input-border-alt"></span>
+          </div>
+          <button type="button" class="button" on:click={handlePaste}>
+            <span class="button-content">⎘ Paste</span>
+          </button>
+        </div>
+        <div class="d-flex align-items-center mb-4">
+          <input
+            type="checkbox"
+            bind:checked={useYTStudioURL}
+            class="ui-checkbox"
+          />
+          <span class="ms-2 text-sm font-medium text-gray-600"
+            >Use YouTube Studio URL (uses slightly more resources)</span
+          >
+        </div>
+        <button class="button yt w-100" on:click={openChatVid}>
+          <span class="button-content">Open</span>
         </button>
       </div>
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <input
-          type="checkbox"
-          bind:checked={useYTStudioURL}
-          class="ui-checkbox"
-        />
-        <span class="ms-2 text-sm font-medium text-gray-600"
-          >Use YouTube Studio URL (uses slightly more resources)</span
-        >
+      <div class="mb-4 px-4 twitch-section w-lg-50 w-100">
+        <div class="eight mb-4">
+          <h1>Twitch Live Chat</h1>
+        </div>
+        <label for="twitchUserId" class="d-flex mb-2">
+          Paste Your Twtich Channel:
+        </label>
+        <div class="mb-2">
+          <div class="form-control">
+            <input
+              id="twitchUserId"
+              type="text"
+              placeholder="Paste Your Twitch"
+              class="input input-alt"
+              class:required={!inputTwitchUser}
+              bind:value={inputTwitchUser}
+            />
+            <span class="input-border input-border-alt"></span>
+          </div>
+        </div>
+        <button class="button w-100" on:click={openTwitchChat}>
+          <span class="button-content">Open</span>
+        </button>
       </div>
-      <button class="button w-100" on:click={openChatVid}>
-        <span class="button-content">Open</span>
-      </button>
     </div>
   </div>
   <div class="fixed-bottom mb-4">
+    <div class="mb-4 px-4 combined-chats">
+      <CombinedButton onClick={openCombinedChats}/>
+    </div>
     <button class="button bg-danger" on:click={handleClearCookies}>
       <span class="button-content">🗑 Clear Data</span>
     </button>
@@ -123,25 +160,4 @@
     border-bottom: 2px solid #ccc;
     background-color: transparent;
   }
-
-	.icons-bar {
-		position: absolute;
-		top: 0;
-		right: 50px;
-		height: 48px;
-		display: flex;
-		gap: 8px;
-		align-items: center;
-	}
-
-	.icons-bar button {
-		background-color: transparent;
-		border: none;
-	}
-
-	.icons-bar svg {
-		width: 32px;
-		height: 32px;
-		color: var(--theme-bg-foreground);
-	}
 </style>

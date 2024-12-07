@@ -2,7 +2,9 @@
   	import '../css/app.css';
     import 'bootstrap/dist/css/bootstrap-utilities.css';
     import 'bootstrap/dist/css/bootstrap-grid.css';
+    // import 'bootstrap/dist/css/bootstrap.css';
     import { browser } from '$app/environment';
+    import IconsBar from '$lib/IconsBar.svelte';
 
     const theme = (browser && localStorage.getItem('theme')) || 'dark';
     
@@ -10,7 +12,12 @@
 </script>
 
 <main>
-  <slot /> <!-- This is where child pages render -->
+  <div class="icons-header">
+    <IconsBar />
+  </div>
+  <div class="main-content">
+    <slot /> <!-- This is where child pages render -->
+  </div>
 </main>
 
 <style>
@@ -35,5 +42,12 @@
   :global(.dark) {
     --theme-bg: #0f0f0f;
     --theme-bg-foreground: #f0f0f0;
+  }
+
+  .icons-header {
+    height: 5dvh;
+  }
+  .main-content {
+    height: 95dvh;
   }
 </style>

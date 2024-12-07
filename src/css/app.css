@@ -79,8 +79,13 @@
   transform: translateX(-50%) translateY(100%) scale(1);
 }
 
+main {
+  width: 100dvw;
+}
+
 #home {
-  max-width: 1280px;
+  /* /* max-width: 1280px; */
+  max-width: 80dvw;
   height: 90vh;
   margin: 0 auto;
   padding: 2rem;
@@ -194,6 +199,14 @@
     rgba(99, 88, 238, 1) 94.3%
   );
   transition: all 0.475s;
+}
+
+.button.yt::before {
+  background: linear-gradient(
+    82.3deg,
+    rgb(170, 62, 62) 10.8%,
+    rgb(233, 93, 93) 94.3%
+  );
 }
 
 .button.bg-danger::before {
@@ -312,4 +325,8 @@
   box-shadow: none;
   transition: none;
   opacity: 1;
+}
+
+.dvh-90 {
+  height: 90dvh;
 }

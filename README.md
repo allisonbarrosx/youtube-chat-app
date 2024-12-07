@@ -42,3 +42,7 @@ You can preview the production build with `npm run preview`.
 1. Save youtube login info instead of login in every time
 2. Write the specs to run tauri
 3. Add a Button to go back to home or find a way to enable navigation inside de app
+
+to add plugins in tauri:
+
+> yarn run tauri add plugins-name
