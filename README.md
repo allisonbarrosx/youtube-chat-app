@@ -46,3 +46,5 @@ You can preview the production build with `npm run preview`.
 to add plugins in tauri:
 
 > yarn run tauri add plugins-name
+
+https://icones.js.org/collection/ant-design?s=twitch
