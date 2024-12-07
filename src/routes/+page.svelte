@@ -2,9 +2,11 @@
   // @ts-nocheck
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
+    import CombinedButton from "$lib/CombinedButton.svelte";
 
   let useYTStudioURL = false;
   let inputYoutubeUserAt = "fazliveaíbx";
+  let inputTwitchUser = "sadixbx";
 
   const handlePaste = async () => {
     try {
@@ -16,10 +18,22 @@
   };
 
   const openChatVid = () => {
-		if (!inputYoutubeUserAt) return;
-		goto(
-			`/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
-		);
+    if (!inputYoutubeUserAt) return;
+    goto(
+      `/youtube-chat?user=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
+    );
+  };
+
+  const openTwitchChat = () => {
+    if (!inputTwitchUser) return;
+    goto(`/twitch-chat?user=${inputTwitchUser}`);
+  };
+
+  const openCombinedChats = () => {
+    if (!inputTwitchUser && inputYoutubeUserAt) return;
+    goto(
+      `/combined-chats?twitchUser=${inputTwitchUser}&youtubeUser=${inputYoutubeUserAt}&useYTStudioURL=${useYTStudioURL}`,
+    );
   };
 
   const handleClearCookies = () => {
@@ -104,6 +118,9 @@
     </div>
   </div>
   <div class="fixed-bottom mb-4">
+    <div class="mb-4 px-4 combined-chats">
+      <CombinedButton onClick={openCombinedChats}/>
+    </div>
     <button class="button bg-danger" on:click={handleClearCookies}>
       <span class="button-content">🗑 Clear Data</span>
     </button>
