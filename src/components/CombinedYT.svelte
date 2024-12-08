@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { chatStore } from '../stores/store';
+    import { json } from '@sveltejs/kit';
 
   export let apiKey: string;
   export let videoId: string;
@@ -11,18 +12,50 @@
 
     async function fetchChat() {
       try {
-        const response = await fetch(
-          `https://www.googleapis.com/youtube/v3/liveChat/messages?liveChatId=${videoId}&part=snippet,authorDetails&key=${apiKey}`
-        );
-        const data = await response.json();
 
+        // Step 1: Get Live Chat ID
+        const videoResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=liveStreamingDetails&key=${apiKey}`
+        );
+
+        const videoData: any = await videoResponse.json();
+        const liveChatId = videoData.items?.[0]?.liveStreamingDetails?.activeLiveChatId;
+
+        if (!liveChatId) {
+            return json({ error: 'No live chat found for this video' }, { status: 404 });
+        }
+
+        // Step 2: Fetch Live Chat Messages
+        const chatResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/liveChat/messages?liveChatId=${liveChatId}&part=snippet,authorDetails&key=${apiKey}`
+        );
+
+        const data = await chatResponse.json();
+        
         data.items.forEach((item: any) => {
+          const messageText = item.snippet.textMessageDetails?.messageText || '';
+          const emotes: { [key: string]: string } = {};
+
+          // Extract custom emotes (emoji) from the message
+          if (item.snippet.textMessageDetails?.messageTextRuns) {
+            item.snippet.textMessageDetails.messageTextRuns.forEach((run: any) => {
+              if (run.emoji) {
+                const shortcut = run.emoji.shortcuts[0]; // e.g., ":smile:"
+                const url = run.emoji.thumbnails[0].url; // Image URL
+                emotes[shortcut] = url;
+              }
+            });
+          }
+
           chatStore.addMessage({
             username: item.authorDetails.displayName,
-            message: item.snippet.textMessageDetails.messageText,
+            message: messageText,
             platform: 'youtube',
+            uniqueId: item.etag,
+            emotes, // Add YouTube-specific emotes
           });
         });
+
       } catch (error) {
         console.error('YouTube Chat API Error:', error);
       }

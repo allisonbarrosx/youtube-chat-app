@@ -119,6 +119,11 @@
   </div>
   <div class="fixed-bottom mb-4">
     <div class="mb-4 px-4 combined-chats">
+      <button class="button" on:click={() => goto('/ttv-yt-combined')}>
+        <span class="button-content">Combied togeris</span>
+      </button>
+    </div>
+    <div class="mb-4 px-4 combined-chats">
       <CombinedButton onClick={openCombinedChats}/>
     </div>
     <button class="button bg-danger" on:click={handleClearCookies}>
