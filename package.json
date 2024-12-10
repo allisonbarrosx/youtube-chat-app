@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
+    "build:dev": "vite build && vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -42,6 +43,7 @@
     "@popperjs/core": "^2.11.8",
     "D": "^1.0.0",
     "bootstrap": "^5.3.3",
+    "puppeteer": "^23.10.2",
     "sass": "^1.81.0",
     "tmi.js": "^1.8.5"
   }

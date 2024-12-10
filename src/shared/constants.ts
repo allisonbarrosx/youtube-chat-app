@@ -12,9 +12,16 @@ const proxies = [
   "https://api.allorigins.win/get?url=",
 ];
 
+// Define the response type for live chat messages
+interface ChatMessage {
+  author: string;
+  message: string;
+  messageId: string;
+}
+
 export {
   Theme,
-  proxies
+  proxies,
 };
 
-export type { ThemeType };
+export type { ThemeType, ChatMessage };

@@ -41,11 +41,11 @@
   });
 </script>
 
-<iframe
+<!-- <iframe
   title="combined-ttv-chat"
   src={`https://www.twitch.tv/embed/${channel}/chat?parent=localhost`}
   frameborder="0"
   scrolling="no"
   width="100%"
   height="300px"
-></iframe>
+></iframe> -->

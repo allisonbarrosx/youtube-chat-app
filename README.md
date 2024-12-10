@@ -39,9 +39,8 @@ You can preview the production build with `npm run preview`.
 
 # TODO
 
-1. Save youtube login info instead of login in every time
-2. Write the specs to run tauri
-3. Add a Button to go back to home or find a way to enable navigation inside de app
+1. Write the specs to run tauri
+2. Create a Node server on tauri to run the combined chats and release a URL for the user use as an ovelay on OBS
 
 to add plugins in tauri:
 
