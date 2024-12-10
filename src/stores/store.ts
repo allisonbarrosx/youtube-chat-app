@@ -8,8 +8,12 @@ interface ChatMessage {
   emotes?: { [key: string]: string }; // Map emote text to image URL
 }
 
+interface YoutubeLiveInfo {
+  liveId: string;
+}
+
 function createChatStore() {
-  const { subscribe, update } = writable<ChatMessage[]>([]);
+  const { subscribe, update, set } = writable<ChatMessage[]>([]);
 
   return {
     subscribe,
@@ -30,7 +34,24 @@ function createChatStore() {
         return messages;
       });
     },
+    reset: () => set([]),
+    set: (value: ChatMessage[]) => set(value)
+  };
+}
+
+function createYoutubeLiveInfo() {
+  const { subscribe, update } = writable<YoutubeLiveInfo>();
+
+  return {
+    subscribe,
+    addLiveId: (liveId: string) => {
+      update((ytLiveInfo) => {
+        ytLiveInfo = { liveId };
+        return ytLiveInfo;
+      });
+    },
   };
 }
 
 export const chatStore = createChatStore();
+export const youtubeLiveInfoStore = createYoutubeLiveInfo();

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { chatStore } from '../stores/store';
-    import type { ChatMessage } from '../shared/constants';
+  import type { ChatMessage } from '../shared/constants';
 
   export let videoId: string;
 

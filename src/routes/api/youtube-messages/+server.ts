@@ -20,7 +20,8 @@ export async function GET({ url }): Promise<Response> {
     // Validate the videoId query parameter
     if (!videoId) {
         const errorResponse: ErrorResponse = { error: 'videoId is required' };
-        return new Response(JSON.stringify(errorResponse), { status: 400 });
+        // return new Response(JSON.stringify(errorResponse), { status: 400 });
+        error(400, {message: JSON.stringify(errorResponse)});
     }
 
     const liveChatUrl = `https://www.youtube.com/live_chat?v=${videoId}&is_popout=1`;
