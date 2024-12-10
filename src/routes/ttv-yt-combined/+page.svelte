@@ -5,9 +5,11 @@
   import { fetchYoutubeLiveChatMessages } from "$lib/YoutubeFetchMessages";
   import { fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
   import { fly } from "svelte/transition";
-    import { linear } from "svelte/easing";
+  import { linear } from "svelte/easing";
+  import { eventStore, startEventInterval, stopEventInterval } from "../../stores/eventStore";
+    import { eventNames } from "../../shared/constants";
 
-  let userChannel   = "fazliveaíbx";
+  let userChannel   = "timthetatman";
   let twitchChannel = "sadixbx";
 
   const ttvIcon =
@@ -35,6 +37,10 @@
   
   $: console.log('messages: ', messages)
 
+  $: if ($eventStore) {
+    fetchYoutubeLiveChatMessages(userChannel);
+  }
+
   onMount(() => {
     const client = new tmi.Client({
       channels: [twitchChannel],
@@ -42,12 +48,14 @@
 
     client.connect();
 
-    fetchYoutubeLiveChatMessages(userChannel);
+    startEventInterval(eventNames.youtube)
+
     fetchTwitchLiveChatMessages(client);
 
     return () => {
       chatStore.reset();
       client.disconnect();
+      stopEventInterval();
     };
   });
 </script>
@@ -78,9 +86,11 @@
 <style>
 
   #combined-messages {
-    height: 100dvh;
+    display: block;
+    height: 98%;
     overflow-y: hidden;
     overflow-x: hidden;
+    margin-inline: 10px;
   }
 
   #combined-messages ul {

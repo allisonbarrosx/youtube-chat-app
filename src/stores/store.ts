@@ -28,7 +28,7 @@ function createChatStore() {
         );
 
         if (!isDuplicate) {
-          return [...messages, msg].slice(-100); // Keep the last 100 messages
+          return [...messages, msg].slice(-50); // Keep the last 50 messages
         }
 
         return messages;

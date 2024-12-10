@@ -12,6 +12,10 @@ const proxies = [
   "https://api.allorigins.win/get?url=",
 ];
 
+const eventNames = {
+  youtube: 'fetchYoutubeMessages'
+}
+
 // Define the response type for live chat messages
 interface ChatMessage {
   author: string;
@@ -22,6 +26,7 @@ interface ChatMessage {
 export {
   Theme,
   proxies,
+  eventNames
 };
 
 export type { ThemeType, ChatMessage };

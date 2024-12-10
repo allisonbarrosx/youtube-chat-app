@@ -3,35 +3,24 @@ import { proxies, type ChatMessage } from "../shared/constants";
 import { chatStore, youtubeLiveInfoStore } from "../stores/store";
 
 async function fetchYoutubeMessages(videoId: string): Promise<void> {
-  const interval = 5000; // YouTube chat poll interval
-  let timeout: ReturnType<typeof setTimeout>;
+  try {
+    const chatResponse = await fetch(
+      `/api/youtube-messages?videoId=${videoId}`,
+    );
 
-  async function fetchMessages() {
-    try {
-      const chatResponse = await fetch(
-        `/api/youtube-messages?videoId=${videoId}`,
-      );
-  
-      const data = await chatResponse.json();
-  
-      data.forEach((item: ChatMessage) => {
-        chatStore.addMessage({
-          username: item.author,
-          message: item.message,
-          platform: "youtube",
-          uniqueId: item.messageId,
-        });
+    const data = await chatResponse.json();
+
+    data.forEach((item: ChatMessage) => {
+      chatStore.addMessage({
+        username: item.author,
+        message: item.message,
+        platform: "youtube",
+        uniqueId: item.messageId,
       });
-    } catch (error) {
-      console.error("YouTube Chat API Error:", error);
-    }
-
-    return setTimeout(fetchMessages, interval);
+    });
+  } catch (error) {
+    console.error("YouTube Chat API Error:", error);
   }
-
-  timeout = await fetchMessages();
-  // possible clearTimeout before finish
-  clearTimeout(timeout);
 }
 
 async function getLiveVideoId(
@@ -75,12 +64,14 @@ async function fetchYoutubeLiveChatMessages(
   userChannel: string,
 ): Promise<void | boolean> {
   const youtubeLiveInfo = get(youtubeLiveInfoStore);
+  console.log('youtubeLiveInfo', youtubeLiveInfo)
+
   if (youtubeLiveInfo === undefined || youtubeLiveInfo.liveId === undefined) {
     const ytInfo = await getLiveVideoId(userChannel);
     ytInfo && youtubeLiveInfoStore.addLiveId((ytInfo as { liveId: string }).liveId );
-  } else {
-    fetchYoutubeMessages(youtubeLiveInfo.liveId);
   }
+
+  youtubeLiveInfo?.liveId && fetchYoutubeMessages(youtubeLiveInfo.liveId);
 }
 
 export { getLiveVideoId, fetchYoutubeMessages, fetchYoutubeLiveChatMessages };
