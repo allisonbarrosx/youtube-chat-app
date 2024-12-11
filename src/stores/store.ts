@@ -10,7 +10,8 @@ interface ChatMessage {
 }
 
 interface YoutubeLiveInfo {
-  liveId: string;
+  liveId: string | null;
+  isChannelLive?: boolean;
 }
 
 function createChatStore() {
@@ -57,6 +58,7 @@ function createYoutubeLiveInfo() {
         return ytLiveInfo;
       });
     },
+    setStatusChannel: (status: boolean) => update((ytLiveInfo) => ytLiveInfo = { liveId: null, isChannelLive: status })
   };
 }
 

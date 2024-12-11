@@ -2,12 +2,12 @@
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import tmi from 'tmi.js';
-  import { chatStore } from "../../stores/store";
+  import { chatStore, youtubeLiveInfoStore } from "../../stores/store";
   import { fetchYoutubeLiveChatMessages } from "$lib/YoutubeFetchMessages";
   import { fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
   import { eventStore, startEventInterval, stopEventInterval } from "../../stores/eventStore";
   import { eventNames } from "../../shared/constants";
-    import { fade, fly } from "svelte/transition";
+  import { fly } from "svelte/transition";
 
   $: twitchUser = $page.url.searchParams.get("twitchUser") ?? '';
   $: youtubeUser = $page.url.searchParams.get("youtubeUser") ?? '';
@@ -18,6 +18,7 @@
     "https://api.iconify.design/ant-design:youtube-filled.svg?color=%23dc3545";
 
   $: messages = $chatStore;
+  $: ytInfoStore = $youtubeLiveInfoStore;
 
   let messagesContainer: HTMLElement;
 
@@ -28,8 +29,8 @@
     node.scroll({ top: node.scrollHeight + 8, behavior: "smooth" }); // + 8 padding
   };
 
-  $: if ($eventStore) {
-    fetchYoutubeLiveChatMessages(youtubeUser);
+  $: if ($eventStore && ytInfoStore?.isChannelLive !== false) {
+      fetchYoutubeLiveChatMessages(youtubeUser);
   }
 
   onMount(() => {

@@ -47,3 +47,10 @@ to add plugins in tauri:
 > yarn run tauri add plugins-name
 
 https://icones.js.org/collection/ant-design?s=twitch
+
+# notes
+
+- separate the overlay chat into a new project
+- create a API on Vercel, that has its own Chrome, that will fetch youtube messages using puppeteer
+- update the call for fetching messages
+- remove the code that does that from the project and move to separe project using only node and puppeteer
