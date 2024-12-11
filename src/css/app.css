@@ -330,3 +330,7 @@ main {
 .dvh-90 {
   height: 90dvh;
 }
+
+.text-indigo-500 {
+  background-color: #6610f2;
+}

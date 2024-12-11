@@ -32,7 +32,7 @@
    * Redirect the user back to the homepage.
    */
   function goBackHome(): void {
-    goto("/");
+    goto("/main");
   }
 </script>
 

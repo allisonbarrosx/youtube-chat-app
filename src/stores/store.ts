@@ -6,6 +6,7 @@ interface ChatMessage {
   platform: 'youtube' | 'twitch';
   uniqueId: number | string;
   emotes?: { [key: string]: string }; // Map emote text to image URL
+  usernameColor: string | undefined;
 }
 
 interface YoutubeLiveInfo {

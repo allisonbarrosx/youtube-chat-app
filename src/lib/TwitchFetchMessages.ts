@@ -23,6 +23,7 @@ async function fetchTwitchLiveChatMessages(client: Client) {
       platform: 'twitch',
       uniqueId: `${Date.now()}${Math.floor(Math.random() * 999) + 1}`,
       emotes: emoteUrls,
+      usernameColor: tags.color
     });
   });
   // client.disconnect();
