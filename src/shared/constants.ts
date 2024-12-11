@@ -11,6 +11,11 @@ const proxies = [
   "https://api.codetabs.com/v1/proxy/?quest=",
   "https://api.allorigins.win/get?url=",
 ];
+const proxiesTtv = [
+  "https://corsproxy.io/?",
+  "https://api.codetabs.com/v1/proxy/?quest=",
+  "https://api.allorigins.win/get?url=",
+];
 
 const eventNames = {
   youtube: 'fetchYoutubeMessages'
@@ -26,6 +31,7 @@ interface ChatMessage {
 export {
   Theme,
   proxies,
+  proxiesTtv,
   eventNames
 };
 

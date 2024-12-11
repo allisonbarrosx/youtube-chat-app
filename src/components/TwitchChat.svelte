@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { Theme } from "../shared/constants";
-  import { proxies } from "../shared/constants";
+  import { proxiesTtv } from "../shared/constants";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import "../css/app.css";
@@ -19,12 +19,13 @@
     // const url = `https://www.twitch.tv/popout/${user}/chat?popout=${theme === Theme.DARK ? "&darkpopout" : ""}`;
     try {
         const response = await fetch(
-          `${proxies[index]}${encodeURIComponent(`https://www.twitch.tv/embed/${user}/chat?parent=${hostname}`)}`,
+          `${proxiesTtv[index]}${encodeURIComponent(`https://www.twitch.tv/embed/${user}/chat?parent=${hostname}`)}`
         );
+
         return response.ok;
     } catch (error) {
       console.warn(`Proxy ${index} failed: ${error}`);
-      if (index >= proxies.length) return false;
+      if (index >= proxiesTtv.length) return false;
       else return setupIframeURL(index + 1);
     } 
   }

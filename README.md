@@ -58,3 +58,5 @@ https://icones.js.org/collection/ant-design?s=twitch
 https://overlaydobx.squareweb.app/chats-overlay?twitchUser=sadixbx&youtubeUser=@TylerTeeP
 
 [] configure messages on combined readonly to not disapear
+
+[] when opening open combined with split screen a bug appeared, twitch doesn't load!
