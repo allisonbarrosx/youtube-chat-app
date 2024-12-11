@@ -4,8 +4,11 @@ import { chatStore, youtubeLiveInfoStore } from "../stores/store";
 
 async function fetchYoutubeMessages(videoId: string): Promise<void> {
   try {
+    // const chatResponse = await fetch(
+    //   `/api/youtube-messages?videoId=${videoId}`,
+    // );
     const chatResponse = await fetch(
-      `/api/youtube-messages?videoId=${videoId}`,
+      `https://youtube-puppeteer-messages.vercel.app/?videoId=${videoId}`,
     );
 
     const data = await chatResponse.json();
