@@ -1,12 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { page } from "$app/stores";
-  import tmi from 'tmi.js';
-  import { chatStore, youtubeLiveInfoStore } from "../../stores/store";
+  import tmi from "tmi.js";
+  import { chatStore, youtubeLiveInfoStore } from "../../../stores/store";
   import { fetchYoutubeLiveChatMessages } from "$lib/YoutubeFetchMessages";
   import { fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
-  import { eventStore, startEventInterval, stopEventInterval } from "../../stores/eventStore";
-  import { eventNames } from "../../shared/constants";
+  import {
+    eventStore,
+    startEventInterval,
+    stopEventInterval,
+  } from "../../../stores/eventStore";
+  import { eventNames } from "../../../shared/constants";
   import { fly } from "svelte/transition";
 
   $: twitchUser = $page.url.searchParams.get("twitchUser") ?? '';
@@ -30,7 +34,7 @@
   };
 
   $: if ($eventStore && ytInfoStore?.isChannelLive !== false) {
-      fetchYoutubeLiveChatMessages(youtubeUser);
+    fetchYoutubeLiveChatMessages(youtubeUser);
   }
 
   onMount(() => {
@@ -40,13 +44,13 @@
       client = new tmi.Client({
         channels: [twitchUser],
       });
-  
+
       client.connect();
       fetchTwitchLiveChatMessages(client);
     }
-    
+
     if (youtubeUser) {
-      startEventInterval(eventNames.youtube)
+      startEventInterval(eventNames.youtube);
     }
 
     return () => {
@@ -57,20 +61,24 @@
   });
 </script>
 
-{#if (twitchUser === '' && youtubeUser === '')}
-  <div class="dvh-90 d-flex flex-column justify-content-center align-items-center">
-    <h1 class="text d-flex justify-content-center mb-4 text-danger">No User Provided</h1>
+{#if twitchUser === "" && youtubeUser === ""}
+  <div
+    class="dvh-90 d-flex flex-column justify-content-center align-items-center"
+  >
+    <h1 class="text d-flex justify-content-center mb-4 text-danger">
+      No User Provided
+    </h1>
   </div>
 {:else}
   <div id="combined-messages" bind:this={messagesContainer}>
     <ul>
       {#each messages as { username, message, platform, uniqueId, usernameColor } (uniqueId)}
-      <li
-      class="message"
-      id={uniqueId.toString()}
-      in:fly={{ x: 200, duration: 250 }}
-      out:fly={{ x: -200, duration: 250 }}
-          >
+        <li
+          class="message"
+          id={uniqueId.toString()}
+          in:fly={{ x: 200, duration: 250 }}
+          out:fly={{ x: -200, duration: 250 }}
+        >
           <img
             src={platform === "youtube" ? ytIcon : ttvIcon}
             alt={platform}
@@ -78,14 +86,16 @@
             height="16"
             class="align-self-baseline"
           />
-          <span class="chat-username ms-1 align-self-baseline text-nowrap fw-medium" style="--userNameColor: {usernameColor}">{username}</span>:&nbsp;
+          <span
+            class="chat-username ms-1 align-self-baseline text-nowrap fw-medium"
+            style="--userNameColor: {usernameColor}">{username}</span
+          >:&nbsp;
           {@html message}
         </li>
       {/each}
     </ul>
   </div>
 {/if}
-
 
 <style>
   .message {
@@ -110,7 +120,7 @@
     margin: 0;
     padding: 0;
     height: 100%;
-    display: flex;    
+    display: flex;
     flex-direction: column;
     justify-content: end;
   }

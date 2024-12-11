@@ -34,7 +34,6 @@ async function getLiveVideoId(
 ): Promise<{ liveId: string | null } | boolean> {
   if (index >= proxies.length) {
     console.error("All proxies failed.");
-    youtubeLiveInfoStore.setStatusChannel(false);
     return false;
   }
 
@@ -59,7 +58,6 @@ async function getLiveVideoId(
       throw new Error("No video ID found.");
     }
 
-    youtubeLiveInfoStore.setStatusChannel(true);
     return { liveId: videoIdMatch[1] };
   } catch (error) {
     console.warn(`Proxy ${index} failed: ${error}`);
@@ -74,8 +72,13 @@ async function fetchYoutubeLiveChatMessages(
   console.log('youtubeLiveInfo', youtubeLiveInfo)
 
   if (youtubeLiveInfo === undefined || youtubeLiveInfo.liveId === undefined) {
+    youtubeLiveInfoStore.setStatusChannel(false);
+
     const ytInfo = await getLiveVideoId(userChannel);
-    ytInfo && youtubeLiveInfoStore.addLiveId((ytInfo as { liveId: string }).liveId );
+    if (ytInfo) {
+      youtubeLiveInfoStore.addLiveId((ytInfo as { liveId: string }).liveId );
+      youtubeLiveInfoStore.setStatusChannel(true);
+    }
   }
 
   youtubeLiveInfo?.liveId && await fetchYoutubeMessages(youtubeLiveInfo.liveId);

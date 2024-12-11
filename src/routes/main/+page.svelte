@@ -29,6 +29,13 @@
     goto(`/main/twitch-chat?user=${inputTwitchUser}`);
   };
 
+  const openCombinedReadOnly = () => {
+    if (!inputTwitchUser && !inputYoutubeUserAt) return;
+    let rest = '';
+    rest = rest.concat(`?twitchUser=${inputTwitchUser}`).concat(`&youtubeUser=${inputYoutubeUserAt}`);
+    goto(`/main/combined-chats-readonly${rest}`);
+  };
+
   const openCombinedChats = () => {
     if (!inputTwitchUser && inputYoutubeUserAt) return;
     goto(
@@ -119,8 +126,8 @@
   </div>
   <div class="fixed-bottom mb-4">
     <div class="mb-4 px-4 combined-chats">
-      <button class="button" on:click={() => goto('/main/ttv-yt-combined?youtubeUser=penguinz0&twitchUser=sadixbx')}>
-        <span class="button-content">Combied togeris</span>
+      <button class="button" on:click={openCombinedReadOnly}>
+        <span class="button-content">Combied Readonly</span>
       </button>
     </div>
     <div class="mb-4 px-4 combined-chats">
