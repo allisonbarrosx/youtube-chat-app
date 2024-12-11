@@ -74,8 +74,8 @@
         <li
           class="message"
           id={uniqueId.toString()}
-          in:fly={{ x: 200, duration: 250, easing: linear }}
-          out:fly={{ x: -200, duration: 250, easing: linear }}
+          in:fly={{ x: 200, duration: 250 }}
+          out:fly={{ x: -200, duration: 250 }}
           >
           <!-- use:autoHideMessage -->
           <img
@@ -95,7 +95,9 @@
 
 
 <style>
-
+  .message {
+    text-shadow: 0 0 0.2em black;
+  }
   .chat-username {
     color: var(--userNameColor);
     text-shadow: 0 0 0.2em var(--userNameColor);
@@ -104,6 +106,7 @@
   #combined-messages {
     display: block;
     height: 98%;
+    max-height: 98%;
     overflow-y: hidden;
     overflow-x: hidden;
     margin-inline: 10px;
@@ -111,24 +114,21 @@
 
   #combined-messages ul {
     list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
   }
 
   #combined-messages ul li {
     padding-block: 0.25rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
   }
 
-  #combined-messages ul {
-    display: flex;
-    /* flex-direction: column-reverse; */
-    flex-direction: column;
-  }
-
-  /* .message {
+  .message {
     transition: opacity 0.5s ease;
-  } */
+  }
 
   :global(.emoji) {
     width: 20px;

@@ -5,10 +5,9 @@
   import { chatStore } from "../../stores/store";
   import { fetchYoutubeLiveChatMessages } from "$lib/YoutubeFetchMessages";
   import { fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
-  import { fly } from "svelte/transition";
-  import { linear } from "svelte/easing";
   import { eventStore, startEventInterval, stopEventInterval } from "../../stores/eventStore";
   import { eventNames } from "../../shared/constants";
+    import { fade, fly } from "svelte/transition";
 
   $: twitchUser = $page.url.searchParams.get("twitchUser") ?? '';
   $: youtubeUser = $page.url.searchParams.get("youtubeUser") ?? '';
@@ -29,15 +28,6 @@
     node.scroll({ top: node.scrollHeight + 8, behavior: "smooth" }); // + 8 padding
   };
 
-  // function autoHideMessage(el: HTMLElement) {
-  //   const uniqueId = el.getAttribute("id") ?? '';
-  //   setTimeout(() => {
-  //     $chatStore = $chatStore.filter((message) => message.uniqueId !== uniqueId);
-  //   }, 3000);
-  // }
-  
-  // $: console.log('messages: ', messages)
-
   $: if ($eventStore) {
     fetchYoutubeLiveChatMessages(youtubeUser);
   }
@@ -45,14 +35,17 @@
   onMount(() => {
     let client: tmi.Client;
 
-    if (twitchUser || youtubeUser) {
+    if (twitchUser) {
       client = new tmi.Client({
         channels: [twitchUser],
       });
   
       client.connect();
-      startEventInterval(eventNames.youtube)
       fetchTwitchLiveChatMessages(client);
+    }
+    
+    if (youtubeUser) {
+      startEventInterval(eventNames.youtube)
     }
 
     return () => {
@@ -70,14 +63,13 @@
 {:else}
   <div id="combined-messages" bind:this={messagesContainer}>
     <ul>
-      {#each messages as { username, message, platform, uniqueId, usernameColor }}
-        <li
-          class="message"
-          id={uniqueId.toString()}
-          in:fly={{ x: 200, duration: 250, easing: linear }}
-          out:fly={{ x: -200, duration: 250, easing: linear }}
+      {#each messages as { username, message, platform, uniqueId, usernameColor } (uniqueId)}
+      <li
+      class="message"
+      id={uniqueId.toString()}
+      in:fly={{ x: 200, duration: 250 }}
+      out:fly={{ x: -200, duration: 250 }}
           >
-          <!-- use:autoHideMessage -->
           <img
             src={platform === "youtube" ? ytIcon : ttvIcon}
             alt={platform}
@@ -95,7 +87,6 @@
 
 
 <style>
-
   .message {
     text-shadow: 0 0 0.2em black;
   }
@@ -108,7 +99,7 @@
     display: block;
     height: 98%;
     max-height: 98%;
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-x: hidden;
     margin-inline: 10px;
   }
@@ -117,23 +108,15 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    height: 100%;
+    display: flex;    
+    flex-direction: column;
+    justify-content: end;
   }
 
   #combined-messages ul li {
     padding-block: 0.25rem;
-    /* display: flex;
-    flex-direction: row;
-    align-items: center; */
   }
-
-  #combined-messages ul {
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* .message {
-    transition: opacity 0.5s ease;
-  } */
 
   :global(.emoji) {
     width: 20px;

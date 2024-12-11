@@ -1,9 +1,9 @@
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 
 interface ChatMessage {
   username: string;
   message: string;
-  platform: 'youtube' | 'twitch';
+  platform: "youtube" | "twitch";
   uniqueId: number | string;
   emotes?: { [key: string]: string }; // Map emote text to image URL
   usernameColor: string | undefined;
@@ -20,12 +20,12 @@ function createChatStore() {
     subscribe,
     addMessage: (msg: ChatMessage) => {
       update((messages) => {
-        // Prevent duplicates by checking unique message + timestamp
+        // Prevent duplicates
         const isDuplicate = messages.some(
           (m) =>
             m.username === msg.username &&
             m.message === msg.message &&
-            m.uniqueId === msg.uniqueId
+            m.uniqueId === msg.uniqueId,
         );
 
         if (!isDuplicate) {
@@ -34,9 +34,15 @@ function createChatStore() {
 
         return messages;
       });
+
+      setTimeout(() => {
+        update((messages) =>
+          messages.filter((m) => m.uniqueId !== msg.uniqueId),
+        );
+      }, 15000); // 15 seconds of screen time KEKW
     },
     reset: () => set([]),
-    set: (value: ChatMessage[]) => set(value)
+    set: (value: ChatMessage[]) => set(value),
   };
 }
 
