@@ -30,17 +30,19 @@ function createChatStore() {
         );
 
         if (!isDuplicate) {
-          return [...messages, msg].slice(-50); // Keep the last 50 messages
+          // TODO: Make it parameterizable
+          return [...messages, msg].slice(-100); // Keep the last 50 messages // 
         }
 
         return messages;
       });
 
-      setTimeout(() => {
-        update((messages) =>
-          messages.filter((m) => m.uniqueId !== msg.uniqueId),
-        );
-      }, 15000); // 15 seconds of screen time KEKW
+      // TODO: Make it parameterizable
+      // setTimeout(() => {
+      //   update((messages) =>
+      //     messages.filter((m) => m.uniqueId !== msg.uniqueId),
+      //   );
+      // }, 15000); // 15 seconds of screen time KEKW
     },
     reset: () => set([]),
     set: (value: ChatMessage[]) => set(value),
