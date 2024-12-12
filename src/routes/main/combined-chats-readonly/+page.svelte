@@ -3,8 +3,9 @@
   import { page } from "$app/stores";
   import tmi from "tmi.js";
   import { chatStore, youtubeLiveInfoStore } from "../../../stores/store";
+  import { sevenTVEmotesStore } from '../../../stores/emotesStore';
   import { fetchYoutubeLiveChatMessages } from "$lib/YoutubeFetchMessages";
-  import { fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
+  import { fetch7TVEmotes, fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
   import {
     eventStore,
     startEventInterval,
@@ -13,8 +14,8 @@
   import { eventNames } from "../../../shared/constants";
   import { fade } from "svelte/transition";
 
-  $: twitchUser = $page.url.searchParams.get("twitchUser") ?? '';
-  $: youtubeUser = $page.url.searchParams.get("youtubeUser") ?? '';
+  $: twitchUser = $page.url.searchParams.get("twitchUser") ?? "";
+  $: youtubeUser = $page.url.searchParams.get("youtubeUser") ?? "";
 
   const ttvIcon =
     "https://api.iconify.design/ant-design:twitch-outlined.svg?color=%236610f2";
@@ -33,7 +34,11 @@
     node.scroll({ top: node.scrollHeight + 8, behavior: "smooth" }); // + 8 padding
   };
 
-  $: if ($eventStore && ytInfoStore.isChannelLive !== false && ytInfoStore.isFetching == false) {
+  $: if (
+    $eventStore &&
+    ytInfoStore.isChannelLive !== false &&
+    ytInfoStore.isFetching == false
+  ) {
     fetchYoutubeLiveChatMessages(youtubeUser);
   }
 
@@ -41,6 +46,23 @@
     chatStore.reset();
     youtubeLiveInfoStore.reset();
   }
+
+  async function configure7TVEmotes(twitchUser: string) {
+		if ($sevenTVEmotesStore.channel !== null && $sevenTVEmotesStore.emotes !== null) return;
+		const emotes = await fetch7TVEmotes(twitchUser);
+		sevenTVEmotesStore.setChannelEmotes(twitchUser, emotes);
+		// this store will be reset only when tab/screen is closed
+	}
+
+  function renderMessageWithEmotes(message: string, emotes: { [key: string]: string } | undefined) {
+		if (!emotes) return message;
+		let words = message.split(' ');
+		return words
+			.map((word) =>
+				emotes[word] ? `<img src="${emotes[word]}" alt="${word}" class="emote" />` : word
+			)
+			.join(' ');
+	}
 
   onMount(() => {
     let client: tmi.Client;
@@ -51,6 +73,7 @@
       });
 
       client.connect();
+      configure7TVEmotes(twitchUser);
       fetchTwitchLiveChatMessages(client);
     }
 
@@ -79,7 +102,7 @@
 {:else}
   <div id="combined-messages" bind:this={messagesContainer}>
     <ul>
-      {#each messages as { username, message, platform, uniqueId, usernameColor } (uniqueId)}
+      {#each messages as { username, message, platform, uniqueId, usernameColor, emotes } (uniqueId)}
         <li
           class="message"
           id={uniqueId.toString()}
@@ -97,7 +120,7 @@
             class="chat-username ms-1 align-self-baseline text-nowrap fw-medium"
             style="--userNameColor: {usernameColor}">{username}</span
           >:&nbsp;
-          {@html message}
+          {@html renderMessageWithEmotes(message, emotes)}
         </li>
       {/each}
     </ul>

@@ -334,3 +334,7 @@ main {
 .text-indigo-500 {
   background-color: #6610f2;
 }
+
+.message .emote {
+  vertical-align: text-bottom;
+}
