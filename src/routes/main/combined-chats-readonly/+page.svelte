@@ -11,7 +11,7 @@
     stopEventInterval,
   } from "../../../stores/eventStore";
   import { eventNames } from "../../../shared/constants";
-  import { fly } from "svelte/transition";
+  import { fade } from "svelte/transition";
 
   $: twitchUser = $page.url.searchParams.get("twitchUser") ?? '';
   $: youtubeUser = $page.url.searchParams.get("youtubeUser") ?? '';
@@ -33,8 +33,13 @@
     node.scroll({ top: node.scrollHeight + 8, behavior: "smooth" }); // + 8 padding
   };
 
-  $: if ($eventStore && ytInfoStore?.isChannelLive !== false) {
+  $: if ($eventStore && ytInfoStore.isChannelLive !== false && ytInfoStore.isFetching == false) {
     fetchYoutubeLiveChatMessages(youtubeUser);
+  }
+
+  function resetStores() {
+    chatStore.reset();
+    youtubeLiveInfoStore.reset();
   }
 
   onMount(() => {
@@ -50,13 +55,15 @@
     }
 
     if (youtubeUser) {
-      startEventInterval(eventNames.youtube);
+      fetchYoutubeLiveChatMessages(youtubeUser).then(() => {
+        startEventInterval(eventNames.youtube);
+      });
     }
 
     return () => {
-      chatStore.reset();
       client && client.disconnect();
       stopEventInterval();
+      resetStores();
     };
   });
 </script>
@@ -76,8 +83,8 @@
         <li
           class="message"
           id={uniqueId.toString()}
-          in:fly={{ x: 200, duration: 250 }}
-          out:fly={{ x: -200, duration: 250 }}
+          in:fade={{ duration: 200 }}
+          out:fade={{ duration: 200 }}
         >
           <img
             src={platform === "youtube" ? ytIcon : ttvIcon}
@@ -99,11 +106,11 @@
 
 <style>
   .message {
-    text-shadow: 0 0 0.2em black;
+    text-shadow: 0 0 0.1em black;
   }
   .chat-username {
     color: var(--userNameColor);
-    text-shadow: 0 0 0.2em var(--userNameColor);
+    /* text-shadow: 0 0 0.2em var(--userNameColor); */
   }
 
   #combined-messages {
