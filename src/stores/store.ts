@@ -60,7 +60,7 @@ function createYoutubeLiveInfo() {
         return ytLiveInfo;
       });
     },
-    setStatusChannel: (status: boolean) => update((ytLiveInfo) => ytLiveInfo = { liveId: null, isChannelLive: status })
+    setStatusChannel: (status: boolean) => update((ytLiveInfo) => ytLiveInfo = { ...ytLiveInfo, isChannelLive: status })
   };
 }
 
