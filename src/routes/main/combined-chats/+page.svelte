@@ -1,6 +1,6 @@
 <script lang="ts">
-  import YouTubeChat from "../../components/YouTubeChat.svelte";
-  import TwitchChat from "../../components/TwitchChat.svelte";
+  import YouTubeChat from "../../../components/YouTubeChat.svelte";
+  import TwitchChat from "../../../components/TwitchChat.svelte";
   import { page } from "$app/stores";
 
   // Access the query parameters

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import YouTubeChat from "../../components/YouTubeChat.svelte";
+	import YouTubeChat from "../../../components/YouTubeChat.svelte";
   import { page } from '$app/stores';
 
   // Access the query parameters

@@ -39,10 +39,24 @@ You can preview the production build with `npm run preview`.
 
 # TODO
 
-1. Save youtube login info instead of login in every time
-2. Write the specs to run tauri
-3. Add a Button to go back to home or find a way to enable navigation inside de app
+1. Write the specs to run tauri
+2. Create a Node server on tauri to run the combined chats and release a URL for the user use as an ovelay on OBS
 
 to add plugins in tauri:
 
 > yarn run tauri add plugins-name
+
+https://icones.js.org/collection/ant-design?s=twitch
+
+# notes
+
+[] separate the overlay chat into a new project
+[] create a API on Vercel, that has its own Chrome, that will fetch youtube messages using puppeteer
+[] update the call for fetching messages
+[] remove the code that does that from the project and move to separe project using only node and puppeteer
+
+https://overlaydobx.squareweb.app/chats-overlay?twitchUser=sadixbx&youtubeUser=@TylerTeeP
+
+[] configure messages on combined readonly to not disapear
+
+[] when opening open combined with split screen a bug appeared, twitch doesn't load!
