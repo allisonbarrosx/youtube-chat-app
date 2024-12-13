@@ -32,6 +32,37 @@
   margin: 0;
 }
 
+@property --sb-handle-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+body {
+  transition: --sb-handle-bg .3s;
+}
+
+body:hover {
+  --sb-handle-bg: rgba(136, 136, 136, 0.8);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--sb-handle-bg);
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
 .pointer {
   cursor: pointer;
 }
@@ -333,6 +364,12 @@ main {
 
 .text-indigo-500 {
   background-color: #6610f2;
+}
+
+/* Fixed so twitch chat can spam copy pasta */
+.message {
+  padding-inline: .25rem;
+  padding-block: .75rem;
 }
 
 .message .emote {

@@ -138,7 +138,7 @@
 
   #combined-messages {
     display: block;
-    height: 98%;
+    /* height: 98%; */
     max-height: 98%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -153,6 +153,7 @@
     display: flex;
     flex-direction: column;
     justify-content: end;
+    max-width: 23rem;
   }
 
   #combined-messages ul li {
