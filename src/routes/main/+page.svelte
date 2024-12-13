@@ -123,13 +123,15 @@
         </button>
       </div>
     </div>
+    <div class="mb-4">
+      <div class="mb-4 px-4 combined-chats">
+        <button class="button" on:click={openCombinedReadOnly}>
+          <span class="button-content">Combied Readonly</span>
+        </button>
+      </div>
+    </div>
   </div>
   <div class="fixed-bottom mb-4">
-    <div class="mb-4 px-4 combined-chats">
-      <button class="button" on:click={openCombinedReadOnly}>
-        <span class="button-content">Combied Readonly</span>
-      </button>
-    </div>
     <div class="mb-4 px-4 combined-chats">
       <CombinedButton onClick={openCombinedChats}/>
     </div>

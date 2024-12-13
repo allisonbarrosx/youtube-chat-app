@@ -128,12 +128,12 @@
 {/if}
 
 <style>
-  .message {
-    text-shadow: 0 0 0.1em black;
-  }
+  /* .message {
+  } */
+  
   .chat-username {
     color: var(--userNameColor);
-    /* text-shadow: 0 0 0.2em var(--userNameColor); */
+    text-shadow: 1px 1px 1px var(--text-shadow-color);
   }
 
   #combined-messages {

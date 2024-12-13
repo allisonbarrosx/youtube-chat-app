@@ -18,12 +18,14 @@
   --tooltip-bg: #303030;
   --tooltip-color: #fff;
   --margin: 0.5rem;
+  --text-shadow-color: #919191; 
 }
 
 :root body.dark {
   --tooltip-bg: #fff;
   --tooltip-color: #5b5b5b;
   --margin: 0.5rem;
+  --text-shadow-color: transparent; 
 }
 
 * {
