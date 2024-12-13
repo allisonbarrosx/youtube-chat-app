@@ -31,6 +31,16 @@ function createChatStore() {
             m.message === msg.message &&
             m.uniqueId === msg.uniqueId,
         );
+        
+        if (!isDuplicate && msg.platform === 'youtube') {
+          const isDuplicateId = messages.some(
+            (m) => m.uniqueId === msg.uniqueId
+          );
+          if (isDuplicateId) {
+            // Sometimes youtube sends the same element with the same Id but different messages
+            msg.uniqueId = `${msg.uniqueId}${Date.now()}${Math.floor(Math.random() * 999) + 1}`;
+          }
+        }
 
         if (!isDuplicate) {
           // TODO: Make it parameterizable
