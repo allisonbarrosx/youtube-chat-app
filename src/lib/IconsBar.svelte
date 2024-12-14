@@ -36,7 +36,7 @@
   }
 </script>
 
-<div class="icons-bar d-flex flex-row justify-content-end m-3">
+<div class="icons-bar d-flex flex-row justify-content-end mx-3">
   <button
     on:click={goBackHome}
     aria-label="Go back to home"

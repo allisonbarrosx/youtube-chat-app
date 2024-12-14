@@ -71,7 +71,7 @@
       title="twitch-chat"
       src={iframeURL}
       frameborder="0"
-      class="chat-iframe"
+      class="chat-iframe ttv"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen
       allowtransparency={true}
@@ -105,7 +105,8 @@
 <style>
   .chat-iframe {
     /* width: var(--containerWidth); */
-    width: calc(100% - 10px);
+    /* width: calc(100% - 10px); */
+    width: 100%;
     height: 100%;
     border: none;
     display: block;

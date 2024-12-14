@@ -373,3 +373,7 @@ main {
 .message .emote {
   vertical-align: text-bottom;
 }
+
+.combined-chats .chat-iframe.ttv {
+  width: calc(100% - 10px);
+}

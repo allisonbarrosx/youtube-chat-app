@@ -53,7 +53,7 @@
     });
 </script>
 
-<div class="d-flex">
+<div class="d-flex combined-chats">
   <div id="youtube-wrapper" class="resizeable-chat" style="flex-basis: {iframe1Width}%;">
     <YouTubeChat bind:user={youtubeUser} {useYTStudioURL}/>
     <div
