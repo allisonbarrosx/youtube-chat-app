@@ -15,7 +15,12 @@ interface YoutubeLiveInfo {
   isFetching: boolean;
 }
 
+interface CombinedChatsConfig {
+  useTwitchChatSize: boolean;
+}
+
 const initialValue = { liveId: null, isFetching: false, isChannelLive: false };
+const configInitialValue = { useTwitchChatSize: true };
 
 function createChatStore() {
   const { subscribe, update, set } = writable<ChatMessage[]>([]);
@@ -31,10 +36,10 @@ function createChatStore() {
             m.message === msg.message &&
             m.uniqueId === msg.uniqueId,
         );
-        
-        if (!isDuplicate && msg.platform === 'youtube') {
+
+        if (!isDuplicate && msg.platform === "youtube") {
           const isDuplicateId = messages.some(
-            (m) => m.uniqueId === msg.uniqueId
+            (m) => m.uniqueId === msg.uniqueId,
           );
           if (isDuplicateId) {
             // Sometimes youtube sends the same element with the same Id but different messages
@@ -44,7 +49,7 @@ function createChatStore() {
 
         if (!isDuplicate) {
           // TODO: Make it parameterizable
-          return [...messages, msg].slice(-100); // Keep the last 50 messages // 
+          return [...messages, msg].slice(-100); // Keep the last 50 messages //
         }
 
         return messages;
@@ -68,13 +73,28 @@ function createYoutubeLiveInfo() {
   return {
     subscribe,
     addLiveId: (liveId: string) => {
-      update((ytLiveInfo) => ({...ytLiveInfo, liveId}));
+      update((ytLiveInfo) => ({ ...ytLiveInfo, liveId }));
     },
-    setStatusChannel: (status: boolean) => update((ytLiveInfo) => ({ ...ytLiveInfo, isChannelLive: status })),
-    setIsFetchingData: (isFetching: boolean) => update((ytLiveInfo) => ({...ytLiveInfo, isFetching})),
-    reset: () => set(initialValue)
+    setStatusChannel: (status: boolean) =>
+      update((ytLiveInfo) => ({ ...ytLiveInfo, isChannelLive: status })),
+    setIsFetchingData: (isFetching: boolean) =>
+      update((ytLiveInfo) => ({ ...ytLiveInfo, isFetching })),
+    reset: () => set(initialValue),
+  };
+}
+
+function createCombinedChatsConfigStore() {
+  const { subscribe, update, set } =
+    writable<CombinedChatsConfig>(configInitialValue);
+
+  return {
+    subscribe,
+    setUseTwitchChatSize: (useTwitchChatSize: boolean) =>
+      update((state) => ({ ...state, useTwitchChatSize })),
+    reset: () => set(configInitialValue),
   };
 }
 
 export const chatStore = createChatStore();
 export const youtubeLiveInfoStore = createYoutubeLiveInfo();
+export const combinedChatsConfigStore = createCombinedChatsConfigStore();

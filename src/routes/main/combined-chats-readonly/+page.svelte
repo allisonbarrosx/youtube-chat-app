@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import tmi from "tmi.js";
-  import { chatStore, youtubeLiveInfoStore } from "../../../stores/store";
+  import { chatStore, combinedChatsConfigStore, youtubeLiveInfoStore } from "../../../stores/store";
   import { sevenTVEmotesStore } from '../../../stores/emotesStore';
   import { fetchYoutubeLiveChatMessages } from "$lib/YoutubeFetchMessages";
   import { fetch7TVEmotes, fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
@@ -24,8 +24,10 @@
 
   $: messages = $chatStore;
   $: ytInfoStore = $youtubeLiveInfoStore;
-
+  
   let messagesContainer: HTMLElement;
+
+  $: messagesWrapperSize = $combinedChatsConfigStore.useTwitchChatSize ? '23rem' : '100%';
 
   $: if (messages && messagesContainer)
     setTimeout(() => scrollToBottom(messagesContainer), 50);
@@ -45,6 +47,7 @@
   function resetStores() {
     chatStore.reset();
     youtubeLiveInfoStore.reset();
+    combinedChatsConfigStore.reset();
   }
 
   async function configure7TVEmotes(twitchUser: string) {
@@ -101,7 +104,7 @@
   </div>
 {:else}
   <div id="combined-messages" bind:this={messagesContainer}>
-    <ul>
+    <ul style="--messagesWrapperSize: {messagesWrapperSize}">
       {#each messages as { username, message, platform, uniqueId, usernameColor, emotes } (uniqueId)}
         <li
           class="message"
@@ -128,8 +131,6 @@
 {/if}
 
 <style>
-  /* .message {
-  } */
   
   .chat-username {
     color: var(--userNameColor);
@@ -153,7 +154,7 @@
     display: flex;
     flex-direction: column;
     justify-content: end;
-    max-width: 23rem;
+    max-width: var(--messagesWrapperSize);
   }
 
   #combined-messages ul li {
