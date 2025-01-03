@@ -1,5 +1,9 @@
 import { get } from "svelte/store";
-import { proxies, type ChatMessage } from "../shared/constants";
+import {
+  proxies,
+  type ChatMessage,
+  type YoutubeChatResponse,
+} from "../shared/constants";
 import { chatStore, youtubeLiveInfoStore } from "../stores/store";
 
 async function fetchYoutubeMessages(videoId: string): Promise<void> {
@@ -14,13 +18,13 @@ async function fetchYoutubeMessages(videoId: string): Promise<void> {
     const data = await chatResponse.json();
 
     data.forEach((item: ChatMessage) => {
-      const randomColor = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+      const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
       chatStore.addMessage({
         username: item.author,
         message: item.message,
         platform: "youtube",
         uniqueId: item.messageId,
-        usernameColor: randomColor
+        usernameColor: randomColor,
       });
     });
   } catch (error) {
@@ -69,10 +73,11 @@ async function fetchYoutubeLiveChatMessages(
   userChannel: string,
 ): Promise<void | boolean> {
   const youtubeLiveInfo = get(youtubeLiveInfoStore);
-  console.log('youtubeLiveInfo', youtubeLiveInfo)
+  console.log("youtubeLiveInfo", youtubeLiveInfo);
 
-  if (youtubeLiveInfo.isChannelLive === true
-    && youtubeLiveInfo.liveId !== null
+  if (
+    youtubeLiveInfo.isChannelLive === true &&
+    youtubeLiveInfo.liveId !== null
   ) {
     youtubeLiveInfoStore.setIsFetchingData(true);
     await fetchYoutubeMessages(youtubeLiveInfo.liveId);
@@ -82,9 +87,49 @@ async function fetchYoutubeLiveChatMessages(
 
   const ytInfo = await getLiveVideoId(userChannel);
   if (ytInfo) {
-    youtubeLiveInfoStore.addLiveId((ytInfo as { liveId: string }).liveId );
+    youtubeLiveInfoStore.addLiveId((ytInfo as { liveId: string }).liveId);
     youtubeLiveInfoStore.setStatusChannel(true);
   }
 }
 
-export { getLiveVideoId, fetchYoutubeMessages, fetchYoutubeLiveChatMessages };
+async function fetchYoutubeLiveId(userChannel: string) {
+  const ytInfo = await getLiveVideoId(userChannel);
+  if (ytInfo) {
+    youtubeLiveInfoStore.addLiveId((ytInfo as { liveId: string }).liveId);
+    youtubeLiveInfoStore.setStatusChannel(true);
+  }
+}
+
+async function fetchYoutubeMessagesFromApi() {
+  const youtubeLiveInfo = get(youtubeLiveInfoStore);
+  try {
+    const response = await fetch(
+      `https://chats-overlay.vercel.app/api/live-chat?videoId=${youtubeLiveInfo.liveId}`,
+    );
+    const data = await response.json();
+    if (data.error) {
+      console.log("Error while getting live chat messages: ", data.error);
+    } else {
+      data.forEach((item: YoutubeChatResponse) => {
+        const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+        chatStore.addMessage({
+          username: item.authorDetails.displayName,
+          message: item.snippet.displayMessage,
+          platform: "youtube",
+          uniqueId: item.id,
+          usernameColor: randomColor,
+        });
+      });
+    }
+  } catch (err) {
+    console.log("Error while getting live chat messages: ", err);
+  }
+}
+
+export {
+  getLiveVideoId,
+  fetchYoutubeMessages,
+  fetchYoutubeLiveChatMessages,
+  fetchYoutubeLiveId,
+  fetchYoutubeMessagesFromApi,
+};

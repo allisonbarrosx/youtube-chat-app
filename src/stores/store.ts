@@ -37,25 +37,25 @@ function createChatStore() {
             m.uniqueId === msg.uniqueId,
         );
 
-        if (!isDuplicate && msg.platform === "youtube") {
-          const isDuplicateId = messages.some(
-            (m) => m.uniqueId === msg.uniqueId,
-          );
-          if (isDuplicateId) {
-            // Sometimes youtube sends the same element with the same Id but different messages
-            msg.uniqueId = `${msg.uniqueId}${Date.now()}${Math.floor(Math.random() * 999) + 1}`;
-          }
-        }
+        // if (!isDuplicate && msg.platform === "youtube") {
+        //   const isDuplicateId = messages.some(
+        //     (m) => m.uniqueId === msg.uniqueId,
+        //   );
+        //   if (isDuplicateId) {
+        //     // Sometimes youtube sends the same element with the same Id but different messages
+        //     msg.uniqueId = `${msg.uniqueId}${Date.now()}${Math.floor(Math.random() * 999) + 1}`;
+        //   }
+        // }
 
         if (!isDuplicate) {
           // TODO: Make it parameterizable
-          return [...messages, msg].slice(-100); // Keep the last 50 messages //
+          return [...messages, msg].slice(-100); // Keep the last 100 messages //
         }
 
         return messages;
       });
 
-      // TODO: Make it parameterizable
+      // TODO: Make it parameterizable, add or not the timeout for messages
       // setTimeout(() => {
       //   update((messages) =>
       //     messages.filter((m) => m.uniqueId !== msg.uniqueId),

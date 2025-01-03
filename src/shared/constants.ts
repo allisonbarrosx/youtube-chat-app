@@ -28,6 +28,24 @@ interface ChatMessage {
   messageId: string;
 }
 
+interface YoutubeChatResponse {
+	id: string;
+	etag: string;
+	authorDetails: {
+		displayName: any;
+		profileImageUrl: any;
+	};
+	snippet: {
+		displayMessage: any;
+		publishedAt: string;
+	};
+}
+
+type EmojiData = {
+  [key: string]: string;
+};
+
+
 export {
   Theme,
   proxies,
@@ -35,4 +53,4 @@ export {
   eventNames
 };
 
-export type { ThemeType, ChatMessage };
+export type { ThemeType, ChatMessage, YoutubeChatResponse, EmojiData };

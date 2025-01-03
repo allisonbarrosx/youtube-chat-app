@@ -2,16 +2,17 @@
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import tmi from "tmi.js";
+  import emojiData from '$lib/youtube-default-emotes.json';
   import { chatStore, combinedChatsConfigStore, youtubeLiveInfoStore } from "../../../stores/store";
   import { sevenTVEmotesStore } from '../../../stores/emotesStore';
-  import { fetchYoutubeLiveChatMessages } from "$lib/YoutubeFetchMessages";
+  import { fetchYoutubeLiveId, fetchYoutubeMessagesFromApi } from "$lib/YoutubeFetchMessages";
   import { fetch7TVEmotes, fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
   import {
     eventStore,
     startEventInterval,
     stopEventInterval,
   } from "../../../stores/eventStore";
-  import { eventNames } from "../../../shared/constants";
+  import { eventNames, type EmojiData } from "../../../shared/constants";
   import { fade } from "svelte/transition";
 
   $: twitchUser = $page.url.searchParams.get("twitchUser") ?? "";
@@ -41,7 +42,7 @@
     ytInfoStore.isChannelLive !== false &&
     ytInfoStore.isFetching == false
   ) {
-    fetchYoutubeLiveChatMessages(youtubeUser);
+    fetchYoutubeMessagesFromApi();
   }
 
   function resetStores() {
@@ -67,6 +68,14 @@
 			.join(' ');
 	}
 
+  function renderYoutubeMessageWithEmotes(message: string) {
+		return message.replace(/:(\w+(-\w+)*):/g, (match, emojiKey) => {
+			// Check if the emojiKey exists in the emojiData
+			const emojiUrl = (emojiData as EmojiData)[emojiKey];
+			return emojiUrl ? `<img src="${emojiUrl}" alt="${emojiKey}" class="emote" />` : match;
+		});
+	}
+
   onMount(() => {
     let client: tmi.Client;
 
@@ -81,10 +90,10 @@
     }
 
     if (youtubeUser) {
-      fetchYoutubeLiveChatMessages(youtubeUser).then(() => {
-        startEventInterval(eventNames.youtube);
-      });
-    }
+			fetchYoutubeLiveId(youtubeUser).then(async () => {
+				startEventInterval(eventNames.youtube);
+			});
+		}
 
     return () => {
       client && client.disconnect();
@@ -123,7 +132,9 @@
             class="chat-username ms-1 align-self-baseline text-nowrap fw-medium"
             style="--userNameColor: {usernameColor}">{username}</span
           >:&nbsp;
-          {@html renderMessageWithEmotes(message, emotes)}
+          {@html platform === 'youtube'
+						? renderYoutubeMessageWithEmotes(message)
+						: renderMessageWithEmotes(message, emotes)}
         </li>
       {/each}
     </ul>
