@@ -8,7 +8,7 @@
   <span aria-hidden="true" class="hover-text">&nbsp;{buttonText}&nbsp;</span>
 </button>
 
-<style>
+<!-- <style>
   /* === removing default button style ===*/
 .button {
   margin: 0;
@@ -53,4 +53,4 @@
   filter: drop-shadow(0 0 23px var(--animation-color));
   padding: 0.5rem !important;
 }
-</style>
+</style> -->

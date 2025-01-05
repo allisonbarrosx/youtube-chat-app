@@ -44,9 +44,9 @@
       document.body.style.userSelect = '';
     };
 
-    document.addEventListener('mousemove', handleResize);
+    document.getElementById('resizer')?.addEventListener('mousemove', handleResize);
   
-    document.addEventListener('mouseup', (event) => {
+    document.getElementById('resizer')?.addEventListener('mouseup', () => {
       if (isResizing) {
         isResizing = false;
       }
@@ -62,7 +62,7 @@
   </div>
 
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="resizer" style="left: {resizerLeftPos}%" on:mousedown={() => startResize()}></div>
+  <div id="resizer" class="resizer" style="left: {resizerLeftPos}%" on:mousedown={() => startResize()}></div>
 
   <div id="twitch-wrapper" class="resizeable-chat" style="flex-basis: {iframe2Width}%;">
     <TwitchChat bind:user={twitchUser} />
@@ -80,7 +80,7 @@
   }
 
   .resizer {
-    width: 10px;
+    width: 5px;
     border-radius: 3px;
     cursor: ew-resize;
     background-color: #3d1f5f;

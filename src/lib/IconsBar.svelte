@@ -5,7 +5,7 @@
   import { Theme } from "../shared/constants";
   import type { ThemeType } from "../shared/constants";
 
-  import "../css/app.css";
+  import "../css/app.scss";
   import "../css/toggle.css";
   import { combinedChatsConfigStore } from "../stores/store";
 
@@ -28,9 +28,12 @@
         ? Theme.LIGHT
         : Theme.DARK;
 
-    const iframe = document.querySelector<HTMLIFrameElement>("iframe");
-    if (iframe) {
-      iframe.src = iframe.src.replace(currentTheme, newTheme);
+    const iframes = document.querySelectorAll<HTMLIFrameElement>("iframe");
+    if (iframes.length > 0) {
+      for (let iframe of iframes) {
+        console.log('iframe', iframe)
+        iframe.src = iframe.src.replace(currentTheme, newTheme);
+      }
     }
 
     document.body.classList.toggle(Theme.DARK);
@@ -67,7 +70,7 @@
     <button
       on:click={goBackHome}
       aria-label="Go back to home"
-      class="pointer btn-tooltip"
+      class="pointer btn-tooltip m-2"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -87,9 +90,10 @@
       <span class="tooltip">Home</span>
     </button>
     <button
+      id="theme-changer"
       on:click={handleThemeChange}
       aria-label="Theme changer"
-      class="pointer btn-tooltip"
+      class="pointer btn-tooltip m-2"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

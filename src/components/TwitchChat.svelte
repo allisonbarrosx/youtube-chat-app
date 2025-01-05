@@ -4,7 +4,7 @@
   import { proxiesTtv } from "../shared/constants";
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
-  import "../css/app.css";
+  import "../css/app.scss";
 
   export let user: string | null | undefined;
 

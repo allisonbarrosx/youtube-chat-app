@@ -1,11 +1,8 @@
 <script lang="ts">
   import { browser } from "$app/environment";
   import { goto } from "$app/navigation";
-	import { Theme } from "../shared/constants";
   import { proxies } from "../shared/constants";
-	import type { ThemeType } from "../shared/constants";
-
-  import "../css/app.css";
+  import "../css/app.scss";
 
   export let user: string | null | undefined;
   export let useYTStudioURL: boolean;
@@ -56,28 +53,6 @@
       console.warn(`Proxy ${index} failed: ${error}`);
       return getLiveId(userChannel, index + 1);
     }
-  }
-
-  /**
-   * Toggle the current theme and update the page accordingly.
-   */
-  function handleThemeChange(): void {
-    if (!browser) return;
-
-    const currentTheme =
-      (localStorage.getItem("theme") as ThemeType) ?? Theme.DARK;
-    const newTheme =
-      currentTheme === Theme.DARK.toLocaleLowerCase()
-        ? Theme.LIGHT
-        : Theme.DARK;
-
-    const iframe = document.querySelector<HTMLIFrameElement>("iframe");
-    if (iframe) {
-      iframe.src = iframe.src.replace(currentTheme, newTheme);
-    }
-
-    document.body.classList.toggle(Theme.DARK);
-    localStorage.setItem("theme", newTheme);
   }
 
   /**

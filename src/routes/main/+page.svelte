@@ -1,12 +1,14 @@
-<script>
+<script lang="ts">
   // @ts-nocheck
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
-    import CombinedButton from "$lib/CombinedButton.svelte";
+  import CombinedButton from "$lib/CombinedButton.svelte";
 
   let useYTStudioURL = false;
-  let inputYoutubeUserAt = "fazliveaíbx";
-  let inputTwitchUser = "sadixbx";
+  let inputYoutubeUserAt: string | null;
+  let inputTwitchUser: string | null;
+  // let inputYoutubeUserAt = "fazliveaíbx";
+  // let inputTwitchUser = "sadixbx";
 
   const handlePaste = async () => {
     try {
@@ -31,8 +33,10 @@
 
   const openCombinedReadOnly = () => {
     if (!inputTwitchUser && !inputYoutubeUserAt) return;
-    let rest = '';
-    rest = rest.concat(`?twitchUser=${inputTwitchUser}`).concat(`&youtubeUser=${inputYoutubeUserAt}`);
+    let rest = "";
+    rest = rest
+      .concat(`?twitchUser=${inputTwitchUser}`)
+      .concat(`&youtubeUser=${inputYoutubeUserAt}`);
     goto(`/main/combined-chats-readonly${rest}`);
   };
 
@@ -48,14 +52,6 @@
       window.clearCookies();
     }
   };
-
-  // const handleThemeChange = () => {
-  //   if (browser) {
-  //     const currentTheme = localStorage.getItem("theme") || "dark";
-  //     document.body.classList.toggle("dark");
-  //     localStorage.setItem("theme", currentTheme === "dark" ? "light" : "dark");
-  //   }
-  // };
 </script>
 
 <main id="home">
@@ -65,24 +61,16 @@
         <div class="eight mb-4">
           <h1>Youtube Live Chat</h1>
         </div>
-        <label for="ytVidID" class="d-flex mb-2">
-          Paste Your Channel @ without the @:
-        </label>
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <div class="form-control">
-            <input
-              id="ytVidID"
-              type="text"
-              placeholder="Paste Your Channel @"
-              class="input input-alt"
-              class:required={!inputYoutubeUserAt}
-              bind:value={inputYoutubeUserAt}
-            />
-            <span class="input-border input-border-alt"></span>
-          </div>
-          <button type="button" class="button" on:click={handlePaste}>
-            <span class="button-content">⎘ Paste</span>
-          </button>
+          <input
+            id="ytVidID"
+            type="text"
+            placeholder="Youtube User"
+            class="form-control"
+            class:required={!inputYoutubeUserAt}
+            bind:value={inputYoutubeUserAt}
+          />
+          <span class="input-border input-border-alt"></span>
         </div>
         <div class="d-flex align-items-center mb-4">
           <input
@@ -94,50 +82,46 @@
             >Use YouTube Studio URL (uses slightly more resources)</span
           >
         </div>
-        <button class="button yt w-100" on:click={openChatVid}>
-          <span class="button-content">Open</span>
+        <button class="btn btn-danger yt w-100" on:click={openChatVid}>Open Youtube Chat
         </button>
       </div>
       <div class="mb-4 px-4 twitch-section w-lg-50 w-100">
         <div class="eight mb-4">
           <h1>Twitch Live Chat</h1>
         </div>
-        <label for="twitchUserId" class="d-flex mb-2">
-          Paste Your Twtich Channel:
-        </label>
-        <div class="mb-2">
-          <div class="form-control">
-            <input
-              id="twitchUserId"
-              type="text"
-              placeholder="Paste Your Twitch"
-              class="input input-alt"
-              class:required={!inputTwitchUser}
-              bind:value={inputTwitchUser}
-            />
-            <span class="input-border input-border-alt"></span>
-          </div>
+        <div class="mb-4">
+          <input
+            id="twitchUserId"
+            type="text"
+            placeholder="Twitch User"
+            class="form-control"
+            class:required={!inputTwitchUser}
+            bind:value={inputTwitchUser}
+          />
+          <span class="input-border input-border-alt"></span>
         </div>
-        <button class="button w-100" on:click={openTwitchChat}>
-          <span class="button-content">Open</span>
+        <button class="btn btn-purple w-100" on:click={openTwitchChat}>Open Twitch Chat
         </button>
       </div>
     </div>
-    <div class="mb-4">
-      <div class="mb-4 px-4 combined-chats">
-        <button class="button" on:click={openCombinedReadOnly}>
-          <span class="button-content">Combied Readonly</span>
-        </button>
-      </div>
+    <div class="vstack gap-2 col-md-5 mx-auto">
+      <button type="button" class="btn btn-primary" on:click={openCombinedChats}>Open Both Chats</button>
+      <button type="button" class="btn btn-primary" on:click={openCombinedReadOnly}>Open Combined Readonly</button>
     </div>
   </div>
-  <div class="fixed-bottom mb-4">
-    <div class="mb-4 px-4 combined-chats">
-      <CombinedButton onClick={openCombinedChats}/>
-    </div>
+  <!-- <div class="fixed-bottom mb-4">
     <button class="button bg-danger" on:click={handleClearCookies}>
       <span class="button-content">🗑 Clear Data</span>
     </button>
+  </div> -->
+  <div class="fixed-bottom m-4">
+    <div class="hstack gap-3 mx-auto">
+      <div class="ms-auto"></div>
+      <div class="p-2">First item</div>
+      <div class="p-2">Second item</div>
+      <div class="p-2">Third item</div>
+      <div class="me-auto"></div>
+    </div>
   </div>
 </main>
 
