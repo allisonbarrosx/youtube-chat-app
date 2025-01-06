@@ -103,7 +103,6 @@ async function fetchYoutubeLiveId(userChannel: string) {
 async function fetchYoutubeMessagesFromApi() {
   const youtubeLiveInfo = get(youtubeLiveInfoStore);
   youtubeLiveInfoStore.setIsFetchingData(true);
-  console.log('chamanda na API')
   try {
     const response = await fetch(
       `https://youtube-live-chat-api.vercel.app/api/live-chat?videoId=${youtubeLiveInfo.liveId}&clientId=APP`,
