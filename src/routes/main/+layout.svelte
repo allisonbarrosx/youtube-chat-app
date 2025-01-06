@@ -6,7 +6,12 @@
 
   const theme = (browser && localStorage.getItem("theme")) || "dark";
 
-  document.body.classList.add(theme);
+  if (
+    !document.body.classList.contains("light") &&
+    !document.body.classList.contains("dark")
+  ) {
+    document.body.classList.add(theme);
+  }
 </script>
 
 <main>
@@ -20,10 +25,7 @@
 </main>
 
 <style>
-  .icons-header {
-    height: 5dvh;
-  }
   .main-content {
-    height: 95dvh;
+    height: 94dvh;
   }
 </style>

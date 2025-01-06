@@ -75,7 +75,7 @@
 <style>
   .resizeable-chat {
     overflow: hidden; 
-    height: 95dvh;
+    height: 94dvh;
     /* position: relative; */
   }
 

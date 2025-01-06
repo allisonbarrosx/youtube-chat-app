@@ -36,7 +36,7 @@
   async function setup(): Promise<void> {
     if (!browser) return;
 
-    document.body.classList.add(theme);
+    // document.body.classList.add(theme);
 
     if (user) {
       document.title = `${user} - Twitch Live Chat`;

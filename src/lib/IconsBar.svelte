@@ -36,7 +36,9 @@
       }
     }
 
-    document.body.classList.toggle(Theme.DARK);
+    if (document.body.classList.contains(Theme.LIGHT)) document.body.classList.remove(Theme.LIGHT)
+    if (document.body.classList.contains(Theme.DARK)) document.body.classList.remove(Theme.DARK)
+    document.body.classList.add(newTheme);
     localStorage.setItem("theme", newTheme);
   }
 
@@ -125,7 +127,7 @@
   }
 
   .icons-bar {
-    height: 5dvh;
+    height: 6dvh;
     gap: 8px;
     align-items: center;
   }

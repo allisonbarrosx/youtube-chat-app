@@ -72,7 +72,7 @@
           />
           <span class="input-border input-border-alt"></span>
         </div>
-        <div class="d-flex align-items-center mb-4">
+        <!-- <div class="d-flex align-items-center mb-4">
           <input
             type="checkbox"
             bind:checked={useYTStudioURL}
@@ -81,7 +81,7 @@
           <span class="ms-2 text-sm font-medium text-gray-600"
             >Use YouTube Studio URL (uses slightly more resources)</span
           >
-        </div>
+        </div> -->
         <button class="btn btn-danger yt w-100" on:click={openChatVid}>Open Youtube Chat
         </button>
       </div>
@@ -89,7 +89,7 @@
         <div class="eight mb-4">
           <h1>Twitch Live Chat</h1>
         </div>
-        <div class="mb-4">
+        <div class="mb-2">
           <input
             id="twitchUserId"
             type="text"
