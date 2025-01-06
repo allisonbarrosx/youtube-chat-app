@@ -2,11 +2,21 @@
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import tmi from "tmi.js";
-  import emojiData from '$lib/youtube-default-emotes.json';
-  import { chatStore, combinedChatsConfigStore, youtubeLiveInfoStore } from "../../../stores/store";
-  import { sevenTVEmotesStore } from '../../../stores/emotesStore';
-  import { fetchYoutubeLiveId, fetchYoutubeMessagesFromApi } from "$lib/YoutubeFetchMessages";
-  import { fetch7TVEmotes, fetchTwitchLiveChatMessages } from "$lib/TwitchFetchMessages";
+  import emojiData from "$lib/youtube-default-emotes.json";
+  import {
+    chatStore,
+    combinedChatsConfigStore,
+    youtubeLiveInfoStore,
+  } from "../../../stores/store";
+  import { sevenTVEmotesStore } from "../../../stores/emotesStore";
+  import {
+    fetchYoutubeLiveId,
+    fetchYoutubeMessagesFromApi,
+  } from "$lib/YoutubeFetchMessages";
+  import {
+    fetch7TVEmotes,
+    fetchTwitchLiveChatMessages,
+  } from "$lib/TwitchFetchMessages";
   import {
     eventStore,
     startEventInterval,
@@ -14,6 +24,7 @@
   } from "../../../stores/eventStore";
   import { eventNames, type EmojiData } from "../../../shared/constants";
   import { fade } from "svelte/transition";
+  import { get } from "svelte/store";
 
   $: twitchUser = $page.url.searchParams.get("twitchUser") ?? "";
   $: youtubeUser = $page.url.searchParams.get("youtubeUser") ?? "";
@@ -24,11 +35,12 @@
     "https://api.iconify.design/ant-design:youtube-filled.svg?color=%23dc3545";
 
   $: messages = $chatStore;
-  $: ytInfoStore = $youtubeLiveInfoStore;
-  
+
   let messagesContainer: HTMLElement;
 
-  $: messagesWrapperSize = $combinedChatsConfigStore.useTwitchChatSize ? '23rem' : '100%';
+  $: messagesWrapperSize = $combinedChatsConfigStore.useTwitchChatSize
+    ? "23rem"
+    : "100%";
 
   $: if (messages && messagesContainer)
     setTimeout(() => scrollToBottom(messagesContainer), 50);
@@ -37,12 +49,10 @@
     node.scroll({ top: node.scrollHeight + 8, behavior: "smooth" }); // + 8 padding
   };
 
-  $: if (
-    $eventStore &&
-    ytInfoStore.isChannelLive !== false &&
-    ytInfoStore.isFetching == false
-  ) {
-    fetchYoutubeMessagesFromApi();
+  $: if ($eventStore) {
+    const ytInfo = get(youtubeLiveInfoStore);
+    if (ytInfo.isChannelLive !== false && ytInfo.isFetching == false)
+      fetchYoutubeMessagesFromApi();
   }
 
   function resetStores() {
@@ -52,29 +62,40 @@
   }
 
   async function configure7TVEmotes(twitchUser: string) {
-		if ($sevenTVEmotesStore.channel !== null && $sevenTVEmotesStore.emotes !== null) return;
-		const emotes = await fetch7TVEmotes(twitchUser);
-		sevenTVEmotesStore.setChannelEmotes(twitchUser, emotes);
-		// this store will be reset only when tab/screen is closed
-	}
+    if (
+      $sevenTVEmotesStore.channel !== null &&
+      $sevenTVEmotesStore.emotes !== null
+    )
+      return;
+    const emotes = await fetch7TVEmotes(twitchUser);
+    sevenTVEmotesStore.setChannelEmotes(twitchUser, emotes);
+    // this store will be reset only when tab/screen is closed
+  }
 
-  function renderMessageWithEmotes(message: string, emotes: { [key: string]: string } | undefined) {
-		if (!emotes) return message;
-		let words = message.split(' ');
-		return words
-			.map((word) =>
-				emotes[word] ? `<img src="${emotes[word]}" alt="${word}" class="emote" />` : word
-			)
-			.join(' ');
-	}
+  function renderMessageWithEmotes(
+    message: string,
+    emotes: { [key: string]: string } | undefined,
+  ) {
+    if (!emotes) return message;
+    let words = message.split(" ");
+    return words
+      .map((word) =>
+        emotes[word]
+          ? `<img src="${emotes[word]}" alt="${word}" class="emote" />`
+          : word,
+      )
+      .join(" ");
+  }
 
   function renderYoutubeMessageWithEmotes(message: string) {
-		return message.replace(/:(\w+(-\w+)*):/g, (match, emojiKey) => {
-			// Check if the emojiKey exists in the emojiData
-			const emojiUrl = (emojiData as EmojiData)[emojiKey];
-			return emojiUrl ? `<img src="${emojiUrl}" alt="${emojiKey}" class="emote" />` : match;
-		});
-	}
+    return message.replace(/:(\w+(-\w+)*):/g, (match, emojiKey) => {
+      // Check if the emojiKey exists in the emojiData
+      const emojiUrl = (emojiData as EmojiData)[emojiKey];
+      return emojiUrl
+        ? `<img src="${emojiUrl}" alt="${emojiKey}" class="emote" />`
+        : match;
+    });
+  }
 
   onMount(() => {
     let client: tmi.Client;
@@ -90,10 +111,10 @@
     }
 
     if (youtubeUser) {
-			fetchYoutubeLiveId(youtubeUser).then(async () => {
-				startEventInterval(eventNames.youtube);
-			});
-		}
+      fetchYoutubeLiveId(youtubeUser).then(async () => {
+        startEventInterval(eventNames.youtube);
+      });
+    }
 
     return () => {
       client && client.disconnect();
@@ -132,9 +153,9 @@
             class="chat-username ms-1 align-self-baseline text-nowrap fw-medium"
             style="--userNameColor: {usernameColor}">{username}</span
           >:&nbsp;
-          {@html platform === 'youtube'
-						? renderYoutubeMessageWithEmotes(message)
-						: renderMessageWithEmotes(message, emotes)}
+          {@html platform === "youtube"
+            ? renderYoutubeMessageWithEmotes(message)
+            : renderMessageWithEmotes(message, emotes)}
         </li>
       {/each}
     </ul>
@@ -142,7 +163,6 @@
 {/if}
 
 <style>
-  
   .chat-username {
     color: var(--userNameColor);
     text-shadow: 1px 1px 1px var(--text-shadow-color);

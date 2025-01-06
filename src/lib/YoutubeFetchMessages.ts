@@ -102,27 +102,38 @@ async function fetchYoutubeLiveId(userChannel: string) {
 
 async function fetchYoutubeMessagesFromApi() {
   const youtubeLiveInfo = get(youtubeLiveInfoStore);
+  youtubeLiveInfoStore.setIsFetchingData(true);
+  console.log('chamanda na API')
   try {
     const response = await fetch(
-      `https://chats-overlay.vercel.app/api/live-chat?videoId=${youtubeLiveInfo.liveId}`,
+      `https://youtube-live-chat-api.vercel.app/api/live-chat?videoId=${youtubeLiveInfo.liveId}&clientId=APP`,
     );
-    const data = await response.json();
-    if (data.error) {
-      console.log("Error while getting live chat messages: ", data.error);
-    } else {
-      data.forEach((item: YoutubeChatResponse) => {
-        const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-        chatStore.addMessage({
-          username: item.authorDetails.displayName,
-          message: item.snippet.displayMessage,
-          platform: "youtube",
-          uniqueId: item.id,
-          usernameColor: randomColor,
+    if (response.status === 200) {
+      const data = await response.json();
+      if (data.error) {
+        if (data.error.contains('offline')) {
+          youtubeLiveInfoStore.setStatusChannel(false);
+          youtubeLiveInfoStore.setIsFetchingData(false);
+        }
+        console.log("Error while getting live chat messages: ", data.error);
+      } else {
+        data.messages.forEach((item: YoutubeChatResponse) => {
+          const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+          chatStore.addMessage({
+            username: item.authorDetails.displayName,
+            message: item.snippet.displayMessage,
+            platform: "youtube",
+            uniqueId: item.id,
+            usernameColor: randomColor,
+          });
         });
-      });
+        // youtubeLiveInfoStore.setPollingIntervalMillis(data.pollingIntervalMillis);
+      }
     }
+    youtubeLiveInfoStore.setIsFetchingData(false);
   } catch (err) {
     console.log("Error while getting live chat messages: ", err);
+    youtubeLiveInfoStore.setIsFetchingData(false);
   }
 }
 

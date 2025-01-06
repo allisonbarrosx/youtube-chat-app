@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { derived, writable } from "svelte/store";
 
 interface ChatMessage {
   username: string;
@@ -13,13 +13,14 @@ interface YoutubeLiveInfo {
   liveId: string | null;
   isChannelLive?: boolean;
   isFetching: boolean;
+  pollingIntervalMillis?: number
 }
 
 interface CombinedChatsConfig {
   useTwitchChatSize: boolean;
 }
 
-const initialValue = { liveId: null, isFetching: false, isChannelLive: false };
+const initialValue = { liveId: null, isFetching: false, isChannelLive: false, pollingIntervalMillis: 0 };
 const configInitialValue = { useTwitchChatSize: true };
 
 function createChatStore() {
@@ -79,7 +80,9 @@ function createYoutubeLiveInfo() {
       update((ytLiveInfo) => ({ ...ytLiveInfo, isChannelLive: status })),
     setIsFetchingData: (isFetching: boolean) =>
       update((ytLiveInfo) => ({ ...ytLiveInfo, isFetching })),
+    setPollingIntervalMillis: (pollingIntervalMillis: number) => update((ytLiveInfo) => ({...ytLiveInfo, pollingIntervalMillis })),
     reset: () => set(initialValue),
+    $pollingInterval: derived({ subscribe }, ($store) => $store.pollingIntervalMillis).subscribe,
   };
 }
 

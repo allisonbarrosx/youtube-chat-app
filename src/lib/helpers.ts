@@ -38,4 +38,12 @@ function waitForIframe(selector: string) {
   });
 }
 
-export { waitForIframe };
+function awaitTime(milliseconds: number) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, milliseconds);
+  });
+}
+
+export { waitForIframe, awaitTime };
